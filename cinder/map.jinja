@@ -1,0 +1,30 @@
+
+{% set controller = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['cinder-api', 'cinder-scheduler', 'lvm2', 'python-cinder'],
+        'services': ['cinder-api', 'cinder-scheduler'],
+        'wipe_method': 'none',
+        'notification': False,
+    },
+    'RedHat': {
+        'pkgs': ['openstack-cinder', 'python-cinder', 'lvm2'],
+        'services': ['openstack-cinder-api', 'openstack-cinder-scheduler'],
+        'wipe_method': 'none',
+        'notification': False,
+    },
+}, merge=salt['pillar.get']('cinder:controller')) %}
+
+{% set volume = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['cinder-volume', 'lvm2', 'sysfsutils', 'sg3-utils', 'python-cinder','python-mysqldb','p7zip'],
+        'services': ['cinder-volume'],
+        'wipe_method': 'none',
+        'notification': False,
+    },
+    'RedHat': {
+        'pkgs': ['openstack-cinder', 'python-cinder', 'lvm2', 'sysfsutils', 'sg3_utils', 'device-mapper-multipath', 'device-mapper-multipath-libs'],
+        'services': ['openstack-cinder-volume'],
+        'wipe_method': 'none',
+        'notification': False,
+    },
+}, merge=salt['pillar.get']('cinder:volume')) %}

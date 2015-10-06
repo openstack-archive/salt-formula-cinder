@@ -1,0 +1,38 @@
+applications:
+- cinder
+parameters:
+  cinder:
+    volume:
+      enabled: true
+      version: ${_param:cinder_version}
+      osapi:
+        host: ${_param:cluster_local_address}
+      database:
+        engine: mysql
+        host: ${_param:cluster_vip_address}
+        port: 3306
+        name: cinder
+        user: cinder
+        password: ${_param:mysql_cinder_password}
+      identity:
+        engine: keystone
+        host: ${_param:cluster_vip_address}
+        port: 35357
+        tenant: service
+        user: cinder
+        password: ${_param:keystone_cinder_password}
+      glance:
+        host: ${_param:cluster_vip_address}
+        port: 9292
+      message_queue:
+        engine: rabbitmq
+        host: ${_param:cluster_vip_address}
+        port: 5672
+        user: openstack
+        password: ${_param:rabbitmq_openstack_password}
+        virtual_host: '/openstack'
+        ha_queues: true
+      storage:
+        engine: iscsi
+        host: localhost
+      types: []
