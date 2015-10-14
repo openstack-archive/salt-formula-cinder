@@ -109,7 +109,7 @@ connection = {{ volume.database.engine }}://{{ volume.database.user }}:{{ volume
 {%- for type in volume.get('types', []) %}
 
 [{{ type.name }}]
-volume_driver = cinder.volume.drivers.storwize_svc.StorwizeSVCDriver
+volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
 volume_backend_name={{ type.name }}
 san_ip={{ volume.storage.host }}
 san_ssh_port={{ volume.storage.port }}

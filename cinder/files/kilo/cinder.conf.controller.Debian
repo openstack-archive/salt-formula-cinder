@@ -100,7 +100,7 @@ connection = {{ controller.database.engine }}://{{ controller.database.user }}:{
 {%- for type in controller.get('types', []) %}
 
 [{{ type.name }}]
-volume_driver = cinder.volume.drivers.storwize_svc.StorwizeSVCDriver
+volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
 volume_backend_name={{ type.name }}
 san_ip={{ controller.storage.host }}
 san_ssh_port={{ controller.storage.port }}
