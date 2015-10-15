@@ -234,6 +234,23 @@ Cinder setup with Fujitsu Eternus
           password: pass
           connection: FC/iSCSI
 
+Cinder setup with IBM GPFS filesystem
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        enabled: true
+        types:
+        - name: GPFS-GOLD
+          engine: gpfs
+          mount_point: '/mnt/gpfs-openstack/cinder/gold'
+        - name: GPFS-SILVER
+          engine: gpfs
+          mount_point: '/mnt/gpfs-openstack/cinder/silver'
+        storage:
+          engine: gpfs
+
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder
