@@ -337,3 +337,20 @@ cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}
 {%- endfor %}
 
 {%- endif %}
+
+{%- if controller.storage.engine == "gpfs" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+volume_backend_name={{ type.name }}
+volume_driver = cinder.volume.drivers.ibm.gpfs.GPFSDriver
+gpfs_mount_point_base={{ type.mount_point }}
+#gpfs_mount_point_base=/mnt/gpfs-openstack/cinder/gold
+gpfs_max_clone_depth=3
+gpfs_sparse_volumes=true
+gpfs_storage_pool=system
+
+{%- endfor %}
+
+{%- endif %}
