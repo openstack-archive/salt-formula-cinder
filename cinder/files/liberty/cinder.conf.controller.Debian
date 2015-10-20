@@ -86,11 +86,9 @@ admin_tenant_name={{ controller.identity.tenant }}
 auth_protocol=http
 admin_user=cinder
 signing_dirname=/tmp/keystone-signing-cinder
-auth_uri=http://{{ controller.identity.host }}:{{ controller.identity.port }}
+auth_uri=http://{{ controller.identity.host }}:5000
 auth_url = http://{{ controller.identity.host }}:35357
 auth_plugin = password
-project_domain_id = default
-user_domain_id = default
 
 [database]
 idle_timeout=3600
