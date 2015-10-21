@@ -1,0 +1,358 @@
+{%- from "cinder/map.jinja" import controller with context %}
+
+[DEFAULT]
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+
+iscsi_helper = tgtadm
+volume_name_template = volume-%s
+#volume_group = cinder
+
+verbose = True
+
+auth_strategy = keystone
+
+state_path = /var/lib/cinder
+lock_path = /var/lock/cinder
+
+use_syslog=False
+
+glance_num_retries=0
+debug=False
+
+#glance_api_ssl_compression=False
+#glance_api_insecure=False
+
+osapi_volume_listen={{ controller.osapi.host }}
+
+glance_host={{ controller.glance.host }}
+glance_port={{ controller.glance.port }}
+glance_api_version=2
+
+volume_backend_name=DEFAULT
+default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
+
+#RPC response timeout recommended by Hitachi
+rpc_response_timeout=3600
+
+#Rabbit
+rpc_backend=cinder.openstack.common.rpc.impl_kombu
+control_exchange=cinder
+
+
+volume_clear={{ controller.wipe_method }}
+
+{%- if controller.notification %}
+control_exchange = cinder
+notification_driver = messagingv2
+{%- endif %}
+
+
+volume_name_template = volume-%s
+
+#volume_group = vg_cinder_volume
+
+volumes_dir = /var/lib/cinder/volumes
+log_dir=/var/log/cinder
+
+# Use syslog for logging. (boolean value)
+#use_syslog=false
+
+use_syslog=false
+verbose=True
+lock_path=/var/lock/cinder
+
+enabled_backends={% for type in controller.get('types', []) %}{{ type.name }}{% if not loop.last %},{% endif %}{% endfor %}
+
+[oslo_concurrency]
+
+lock_path=/var/lock/cinder
+
+[oslo_messaging_rabbit]
+rabbit_host = {{ controller.message_queue.host }}
+rabbit_port = {{ controller.message_queue.port }}
+rabbit_userid = {{ controller.message_queue.user }}
+rabbit_password = {{ controller.message_queue.password }}
+rabbit_virtual_host = {{ controller.message_queue.virtual_host }}
+rabbit_ha_queues={{ controller.message_queue.ha_queues }}
+kombu_reconnect_delay=5.0
+
+[keystone_authtoken]
+signing_dir=/tmp/keystone-signing-cinder
+admin_password={{ controller.identity.password }}
+auth_port={{ controller.identity.port }}
+auth_host={{ controller.identity.host }}
+admin_tenant_name={{ controller.identity.tenant }}
+auth_protocol=http
+admin_user=cinder
+signing_dirname=/tmp/keystone-signing-cinder
+auth_uri=http://{{ controller.identity.host }}:5000
+auth_url = http://{{ controller.identity.host }}:35357
+auth_plugin = password
+
+[database]
+idle_timeout=3600
+max_pool_size=30
+max_retries=-1
+max_overflow=40
+connection = {{ controller.database.engine }}://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}
+
+{%- if controller.storage.engine == "storwize" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
+volume_backend_name={{ type.name }}
+san_ip={{ controller.storage.host }}
+san_ssh_port={{ controller.storage.port }}
+san_login={{ controller.storage.user }}
+san_password={{ controller.storage.password }}
+
+storwize_svc_volpool_name={{ type.pool }}
+#storwize_svc_connection_protocol=iSCSI
+storwize_svc_connection_protocol={{ controller.storage.connection }}
+#storwize_svc_iscsi_chap_enabled=true
+storwize_svc_multihost_enabled={{ controller.storage.multihost }}
+storwize_svc_multipath_enabled={{ controller.storage.multipath }}
+
+{%- endfor %}
+
+{%- endif %}
+
+{%- if controller.storage.engine == "hitachi_vsp" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+volume_driver = cinder.volume.drivers.hitachi.hbsd_fc.HBSDFCDriver
+volume_backend_name={{ type.name }}
+
+#
+# Options defined in cinder.volume.drivers.hitachi.hbsd_common
+#
+# Serial number of storage system (string value)
+#hitachi_serial_number=<None>
+hitachi_serial_number=86644
+#hitachi_serial_number=355316
+
+# Name of an array unit (string value)
+#hitachi_unit_name=<None>
+#hitachi_unit_name=fiat
+
+# Pool ID of storage system (integer value)
+#hitachi_pool_id=<None>
+hitachi_pool_id=4
+
+# Thin pool ID of storage system (integer value)
+hitachi_thin_pool_id=14
+
+# Range of logical device of storage system (string value)
+#hitachi_ldev_range=<None>
+#hitachi_ldev_range=00:05:00-00:05:FF
+
+# Default copy method of storage system (string value)
+#hitachi_default_copy_method=FULL
+hitachi_default_copy_method=THIN
+
+# Copy speed of storage system (integer value)
+#hitachi_copy_speed=3
+
+# Interval to check copy (integer value)
+#hitachi_copy_check_interval=3
+
+# Interval to check copy asynchronously (integer value)
+#hitachi_async_copy_check_interval=10
+
+# Control port names for HostGroup or iSCSI Target (string
+# value)
+#hitachi_target_ports=<None>
+hitachi_target_ports=CL1-E,CL2-E,CL3-B,CL4-D
+
+# Range of group number (string value)
+#hitachi_group_range=
+#hitachi_group_range=
+
+# Request for creating HostGroup or iSCSI Target (boolean
+# value)
+hitachi_group_request=True
+#hitachi_group_request=false
+#
+# Options defined in cinder.volume.drivers.hitachi.hbsd_fc
+#
+# Request for FC Zone creating HostGroup (boolean value)
+hitachi_zoning_request=true
+#
+# Options defined in cinder.volume.drivers.hitachi.hbsd_horcm
+#
+# Instance numbers for HORCM (string value)
+#hitachi_horcm_numbers=200,201
+hitachi_horcm_numbers=0,1
+
+# Username of storage system for HORCM (string value)
+#hitachi_horcm_user=<None>
+#hitachi_horcm_user=openstack
+hitachi_horcm_user=root
+
+# Password of storage system for HORCM (string value)
+#hitachi_horcm_password=<None>
+#hitachi_horcm_password=avg2014
+hitachi_horcm_password=X3tT35va
+
+# Add to HORCM configuration (boolean value)
+#hitachi_horcm_add_conf=true
+hitachi_horcm_add_conf=true
+
+#hitachi multipath advice
+use_multipath_for_image_xfer=false
+
+{%- endfor %}
+
+{%- endif %}
+
+{%- if controller.storage.engine == "ceph" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+#
+# Options defined in cinder.volume.drivers.rbd
+#
+# The RADOS pool where rbd volumes are stored (string value)
+#rbd_pool=volumes
+rbd_pool={{ type.pool }}
+
+# The RADOS client name for accessing rbd volumes - only set
+# when using cephx authentication (string value)
+#rbd_user=cinder
+rbd_user={{ controller.storage.user }}
+
+# Path to the ceph configuration file (string value)
+#rbd_ceph_conf=
+rbd_ceph_conf=/etc/ceph/ceph.conf
+
+# Flatten volumes created from snapshots to remove dependency
+# from volume to snapshot (boolean value)
+#rbd_flatten_volume_from_snapshot=false
+
+# The libvirt uuid of the secret for the rbd_user volumes
+# (string value)
+#rbd_secret_uuid=da74ccb7-aa59-1721-a172-0006b1aa4e3e
+rbd_secret_uuid={{ controller.storage.secret_uuid }}
+
+# Directory where temporary image files are stored when the
+# volume driver does not write them directly to the volume.
+# (string value)
+#volume_tmp_dir=<None>
+
+# Maximum number of nested volume clones that are taken before
+# a flatten occurs. Set to 0 to disable cloning. (integer
+# value)
+#rbd_max_clone_depth=5
+
+# Volumes will be chunked into objects of this size (in
+# megabytes). (integer value)
+#rbd_store_chunk_size=4
+
+# Timeout value (in seconds) used when connecting to ceph
+# cluster. If value < 0, no timeout is set and default
+# librados value is used. (integer value)
+#rados_connect_timeout=-1
+
+{%- endfor %}
+
+{%- endif %}
+
+
+{%- if controller.storage.engine == "hp3par" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+
+hp3par_api_url={{ controller.storage.url }}
+
+# 3PAR Super user username
+hp3par_username={{ controller.storage.user }}
+
+# 3PAR Super user password
+hp3par_password={{ controller.storage.password }}
+
+# 3PAR CPG to use for volume creation
+hp3par_cpg={{ controller.storage.cpg }}
+
+# IP address of SAN controller for SSH access to the array
+san_ip={{ controller.storage.host }}
+
+# Username for SAN controller for SSH access to the array
+san_login={{ controller.storage.login }}
+
+# Password for SAN controller for SSH access to the array
+san_password={{ controller.storage.password }}
+
+# FIBRE CHANNEL(uncomment the next line to enable the FC driver)
+volume_driver=cinder.volume.drivers.san.hp.hp_3par_fc.HP3PARFCDriver
+
+# iSCSI (uncomment the next line to enable the iSCSI driver and
+# hp3par_iscsi_ips or iscsi_ip_address)
+#volume_driver=cinder.volume.drivers.san.hp.hp_3par_iscsi.HP3PARISCSIDriver
+
+# iSCSI multiple port configuration
+# hp3par_iscsi_ips=10.10.220.253:3261,10.10.222.234
+#hp3par_iscsi_ips=10.10.103.151
+
+# Still available for single port iSCSI configuration
+#iscsi_ip_address=10.10.103.151
+
+## OPTIONAL SETTINGS
+# Enable HTTP debugging to 3PAR
+# hp3par_debug=True
+hp3par_debug={{ controller.storage.debug }}
+
+# Enable CHAP authentication for iSCSI connections.
+hp3par_iscsi_chap_enabled=false
+
+# The CPG to use for Snapshots for volumes. If empty hp3par_cpg will be used.
+hp3par_snap_cpg={{ controller.storage.snapcpg }}
+
+# Time in hours to retain a snapshot. You can't delete it before this expires.
+hp3par_snapshot_retention=2
+
+# Time in hours when a snapshot expires and is deleted. This must be larger than retention.
+hp3par_snapshot_expiration=4
+
+{%- endfor %}
+
+{%- endif %}
+
+{%- if controller.storage.engine == "fujitsu" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+volume_backend_name={{ type.name }}
+volume_driver=cinder.volume.drivers.fujitsu.fujitsu_eternus_dx_fc.FJDXFCDriver
+cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml
+
+{%- endfor %}
+
+{%- endif %}
+
+{%- if controller.storage.engine == "gpfs" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.name }}]
+volume_backend_name={{ type.name }}
+volume_driver = cinder.volume.drivers.ibm.gpfs.GPFSDriver
+gpfs_mount_point_base={{ type.mount_point }}
+#gpfs_mount_point_base=/mnt/gpfs-openstack/cinder/gold
+gpfs_max_clone_depth=3
+gpfs_sparse_volumes=true
+gpfs_storage_pool=system
+
+{%- endfor %}
+
+{%- endif %}
