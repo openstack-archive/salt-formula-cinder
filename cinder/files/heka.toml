@@ -5,6 +5,13 @@ log_directory = "/var/log/cinder"
 file_match = 'cinder-scheduler\.log\.?(?P<Index>\d+)?(.gz)?'
 priority = ["^Index"]
 decoder = "openstack"
+
+[logstreamer_cinder_manage]
+type = "LogstreamerInput"
+log_directory = "/var/log/cinder"
+file_match = 'cinder-manage\.log\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "openstack"
 {%- endif %}
 
 {%- if pillar.cinder.volume is defined %}
