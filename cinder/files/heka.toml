@@ -1,0 +1,22 @@
+{%- if pillar.cinder.controller is defined %}
+[logstreamer_cinder_scheduler]
+type = "LogstreamerInput"
+log_directory = "/var/log/cinder"
+file_match = 'cinder-scheduler\.log\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "openstack"
+{%- endif %}
+
+{%- if pillar.cinder.volume is defined %}
+[logstreamer cinder_volume]
+type = "LogstreamerInput"
+log_directory = "/var/log/cinder"
+file_match = 'cinder-volume\.log\.?(?P<Index>\d+)?(.gz)?'
+priority = ["^Index"]
+decoder = "openstack"
+{%- endif %}
+
+[openstack]
+type = "SandboxDecoder"
+filename = "lua_modules/decoders/openstack.lua"
+module_directory = "/usr/share/heka/lua_modules;/usr/share/heka/lua_modules/common"
