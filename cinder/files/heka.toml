@@ -15,7 +15,7 @@ decoder = "openstack"
 {%- endif %}
 
 {%- if pillar.cinder.volume is defined %}
-[logstreamer cinder_volume]
+[logstreamer_cinder_volume]
 type = "LogstreamerInput"
 log_directory = "/var/log/cinder"
 file_match = 'cinder-volume\.log\.?(?P<Index>\d+)?(.gz)?'
