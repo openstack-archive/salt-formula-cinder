@@ -1,0 +1,14 @@
+doc:
+  name: Cinder
+  description: Cinder provides an infrastructure for managing volumes in OpenStack. It was originally a Nova component called nova-volume, but has become an independent project since the Folsom release.
+  role:
+  {%- if pillar.cinder.controller is defined %}
+    controller:
+      name: controller
+      param: {}
+  {%- endif %}
+  {%- if pillar.cinder.volume is defined %}
+    volume:
+      name: volume
+      param: {}
+  {%- endif %}
