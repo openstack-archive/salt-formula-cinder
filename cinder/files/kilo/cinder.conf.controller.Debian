@@ -213,7 +213,7 @@ use_multipath_for_image_xfer=false
 {%- for type in controller.get('types', []) %}
 
 [{{ type.backend }}]
-
+volume_backend_name={{ type.backend }}
 volume_driver = cinder.volume.drivers.rbd.RBDDriver
 #
 # Options defined in cinder.volume.drivers.rbd

@@ -279,7 +279,7 @@ hitachi_storage_cli=HORCM
 {%- for type in volume.get('types', []) %}
 
 [{{ type.backend }}]
-
+volume_backend_name={{ type.backend }}
 volume_driver = cinder.volume.drivers.rbd.RBDDriver
 #
 # Options defined in cinder.volume.drivers.rbd
