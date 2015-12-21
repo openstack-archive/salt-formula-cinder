@@ -30,7 +30,7 @@ glance_port={{ controller.glance.port }}
 glance_api_version=2
 
 volume_backend_name=DEFAULT
-default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
+default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.backend }}{% endif %}{% endfor %}
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
@@ -62,7 +62,7 @@ use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
 
-enabled_backends={% for type in controller.get('types', []) %}{{ type.name }}{% if not loop.last %},{% endif %}{% endfor %}
+enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}
 
 [oslo_concurrency]
 
@@ -101,9 +101,9 @@ connection = {{ controller.database.engine }}://{{ controller.database.user }}:{
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
-volume_backend_name={{ type.name }}
+volume_backend_name={{ type.backend }}
 san_ip={{ controller.storage.host }}
 san_ssh_port={{ controller.storage.port }}
 san_login={{ controller.storage.user }}
@@ -124,9 +124,9 @@ storwize_svc_multipath_enabled={{ controller.storage.multipath }}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 volume_driver = cinder.volume.drivers.hitachi.hbsd_fc.HBSDFCDriver
-volume_backend_name={{ type.name }}
+volume_backend_name={{ type.backend }}
 
 #
 # Options defined in cinder.volume.drivers.hitachi.hbsd_common
@@ -214,7 +214,7 @@ use_multipath_for_image_xfer=false
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 
 volume_driver = cinder.volume.drivers.rbd.RBDDriver
 #
@@ -270,7 +270,7 @@ rbd_secret_uuid={{ controller.storage.secret_uuid }}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 
 hp3par_api_url={{ controller.storage.url }}
 
@@ -331,10 +331,10 @@ hp3par_snapshot_expiration=4
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
-volume_backend_name={{ type.name }}
+[{{ type.backend }}]
+volume_backend_name={{ type.backend }}
 volume_driver=cinder.volume.drivers.fujitsu.fujitsu_eternus_dx_fc.FJDXFCDriver
-cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml
+cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.backend }}.xml
 
 {%- endfor %}
 
@@ -344,8 +344,8 @@ cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
-volume_backend_name={{ type.name }}
+[{{ type.backend }}]
+volume_backend_name={{ type.backend }}
 volume_driver = cinder.volume.drivers.ibm.gpfs.GPFSDriver
 gpfs_mount_point_base={{ type.mount_point }}
 #gpfs_mount_point_base=/mnt/gpfs-openstack/cinder/gold
