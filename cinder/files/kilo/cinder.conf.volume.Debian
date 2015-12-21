@@ -30,7 +30,7 @@ glance_port={{ volume.glance.port }}
 glance_api_version=2
 
 volume_backend_name=DEFAULT
-default_volume_type={% for type in volume.get('types', []) %}{% if loop.first %}{{ type.backend }}{% endif %}{% endfor %}
+default_volume_type={% for type in volume.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
