@@ -30,7 +30,20 @@ glance_port={{ volume.glance.port }}
 glance_api_version=2
 
 volume_backend_name=DEFAULT
+
+{%- if volume.backend is defined %}
+
+default_volume_type={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{% if loop.first %}{{ backend_name }}{% endif %}{% endfor %}
+
+enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
+
+{%- else %}
+
 default_volume_type={% for type in volume.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
+
+enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+
+{%- endif %}
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
@@ -69,8 +82,6 @@ log_dir=/var/log/cinder
 
 use_syslog=false
 verbose=True
-
-enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
 
 [oslo_concurrency]
 
