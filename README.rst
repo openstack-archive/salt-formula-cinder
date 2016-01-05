@@ -130,32 +130,46 @@ Default Cinder setup with iSCSI target
         - name: 10k_SAS
         - name: 15k_SAS
 
-Cinder setup with IBM Storwize
+Cinder setup for IBM Storwize
 
 .. code-block:: yaml
 
     cinder:
-      controller:
+      volume:
         enabled: true
-        types:
-        - name: 7k2_SAS
-          engine: storwize
-          pool: SAS7K2
-        - name: 10k_SAS
-          pool: SAS10K
-          engine: storwize
-        - name: 15k_SAS
-          pool: SAS15K
-          engine: storwize
-        storage:
-          engine: storwize
-          host: 192.168.0.1
-          port: 22
-          user: username
-          password: pass
-          connection: FC/iSCSI
-          multihost: true
-          multipath: true
+        backend:
+          7k2_SAS:
+            engine: storwize
+            name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
+          10k_SAS:
+            engine: storwize
+            name: 10k SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS10K
+          15k_SAS:
+            engine: storwize
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS15K
 
 Cinder setup with Hitachi VPS
 
