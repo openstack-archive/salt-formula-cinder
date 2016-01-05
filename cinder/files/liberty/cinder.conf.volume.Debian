@@ -106,6 +106,13 @@ max_retries=-1
 max_overflow=40
 connection = {{ volume.database.engine }}://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}
 
+{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
+
+{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + "conf" %}
+{%- include backend_fragment %}
+
+{%- endfor %}
+
 {%- if volume.storage.engine == "storwize" %}
 
 {%- for type in volume.get('types', []) %}
