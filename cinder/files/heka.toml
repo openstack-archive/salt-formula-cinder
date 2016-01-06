@@ -5,7 +5,7 @@ log_directory = "/var/log/cinder"
 file_match = 'cinder-scheduler\.log\.?(?P<Index>\d+)?(.gz)?'
 priority = ["^Index"]
 decoder = "openstack"
-oldest_duration: "168h"
+oldest_duration = "168h"
 
 [logstreamer_cinder_manage]
 type = "LogstreamerInput"
@@ -13,7 +13,7 @@ log_directory = "/var/log/cinder"
 file_match = 'cinder-manage\.log\.?(?P<Index>\d+)?(.gz)?'
 priority = ["^Index"]
 decoder = "openstack"
-oldest_duration: "168h"
+oldest_duration = "168h"
 {%- endif %}
 
 {%- if pillar.cinder.volume is defined %}
@@ -23,7 +23,7 @@ log_directory = "/var/log/cinder"
 file_match = 'cinder-volume\.log\.?(?P<Index>\d+)?(.gz)?'
 priority = ["^Index"]
 decoder = "openstack"
-oldest_duration: "168h"
+oldest_duration = "168h"
 {%- endif %}
 
 [openstack]
