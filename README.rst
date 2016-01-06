@@ -178,12 +178,12 @@ Cinder setup with Hitachi VPS
     cinder:
       controller:
         enabled: true
-        types:
-        - name: HUS100
-          backend: hus100_backend
-        storage:
-          engine: hitachi_vsp
-          connection: FC
+        backend:
+          hus100_backend:
+            name: HUS100
+            backend: hus100_backend
+            engine: hitachi_vsp
+            connection: FC
 
 Cinder setup with CEPH
 
@@ -192,15 +192,15 @@ Cinder setup with CEPH
     cinder:
       controller:
         enabled: true
-        types:
-        - name: ceph
-          backend: ceph_backend
-          pool: volumes
-        storage:
-          engine: ceph
-          user: cinder
-          secret_uuid: da74ccb7-aa59-1721-a172-0006b1aa4e3e
-          client_cinder_key: AQDOavlU6BsSJhAAnpFR906mvdgdfRqLHwu0Uw==
+        backend:
+          ceph_backend:
+            name: standard-iops
+            backend: ceph_backend
+            pool: volumes
+            engine: ceph
+            user: cinder
+            secret_uuid: da74ccb7-aa59-1721-a172-0006b1aa4e3e
+            client_cinder_key: AQDOavlU6BsSJhAAnpFR906mvdgdfRqLHwu0Uw==
 
 http://ceph.com/docs/master/rbd/rbd-openstack/
 
@@ -212,19 +212,19 @@ Cinder setup with HP3par
     cinder:
       controller:
         enabled: true
-        types:
-        - name: hp3par
-          backend: hp3par_backend
-        storage:
-          user: hp3paruser
-          password: something
-          url: http://10.10.10.10/api/v1
-          cpg: OpenStackCPG
-          host: 10.10.10.10
-          login: hp3paradmin
-          sanpassword: something
-          debug: True
-          snapcpg: OpenStackSNAPCPG
+        backend:
+          hp3par_backend:
+            name: hp3par
+            backend: hp3par_backend
+            user: hp3paruser
+            password: something
+            url: http://10.10.10.10/api/v1
+            cpg: OpenStackCPG
+            host: 10.10.10.10
+            login: hp3paradmin
+            sanpassword: something
+            debug: True
+            snapcpg: OpenStackSNAPCPG
 
 Cinder setup with Fujitsu Eternus
 
@@ -233,20 +233,25 @@ Cinder setup with Fujitsu Eternus
     cinder:
       volume:
         enabled: true
-        types:
-        - name: 10kThinPro
-          engine: fujitsu
-          pool: 10kThinPro
-        - name: 10k_SAS
-          pool: SAS10K
-          engine: fujitsu
-        storage:
-          engine: fujitsu
-          host: 192.168.0.1
-          port: 5988
-          user: username
-          password: pass
-          connection: FC/iSCSI
+        backend:
+          10kThinPro:
+            name: 10kThinPro
+            engine: fujitsu
+            pool: 10kThinPro
+            host: 192.168.0.1
+            port: 5988
+            user: username
+            password: pass
+            connection: FC/iSCSI
+          10k_SAS:
+            name: 10k_SAS
+            pool: SAS10K
+            engine: fujitsu
+            host: 192.168.0.1
+            port: 5988
+            user: username
+            password: pass
+            connection: FC/iSCSI
 
 Cinder setup with IBM GPFS filesystem
 
@@ -255,16 +260,16 @@ Cinder setup with IBM GPFS filesystem
     cinder:
       volume:
         enabled: true
-        types:
-        - name: GPFS-GOLD
-          engine: gpfs
-          mount_point: '/mnt/gpfs-openstack/cinder/gold'
-        - name: GPFS-SILVER
-          engine: gpfs
-          mount_point: '/mnt/gpfs-openstack/cinder/silver'
-        storage:
-          engine: gpfs
-
+        backend:
+          GPFS-GOLD:
+            name: GPFS-GOLD
+            engine: gpfs
+            mount_point: '/mnt/gpfs-openstack/cinder/gold'
+          GPFS-SILVER
+            name: GPFS-SILVER
+            engine: gpfs
+            mount_point: '/mnt/gpfs-openstack/cinder/silver'
+        
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder

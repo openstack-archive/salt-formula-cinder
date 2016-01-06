@@ -1,3 +1,4 @@
+{%- if volume.storage.engine is defined %}
 {%- from "cinder/map.jinja" import volume with context -%}
 <?xml version='1.0' encoding='UTF-8'?>
 <FUJITSU>
@@ -8,3 +9,14 @@
 <EternusISCSIIP></EternusISCSIIP>
 <EternusPool>{{ volume_type_name }}</EternusPool>
 </FUJITSU>
+{%- else %}
+<?xml version='1.0' encoding='UTF-8'?>
+<FUJITSU>
+<EternusIP>{{ volume.backend.host }}</EternusIP>
+<EternusPort>{{ volume.backend.port }}</EternusPort>
+<EternusUser>{{ volume.backend.user }}</EternusUser>
+<EternusPassword>{{ volume.backend.password }}</EternusPassword>
+<EternusISCSIIP></EternusISCSIIP>
+<EternusPool>{{ backend.pool }}</EternusPool>
+</FUJITSU>
+{%- endif %}
