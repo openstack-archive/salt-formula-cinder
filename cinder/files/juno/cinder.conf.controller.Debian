@@ -108,7 +108,7 @@ connection = {{ controller.database.engine }}://{{ controller.database.user }}:{
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
-{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + "conf" %}
+{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + ".conf" %}
 {%- include backend_fragment %}
 
 {%- endfor %}
