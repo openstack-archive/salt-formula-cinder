@@ -128,7 +128,7 @@ cinder_driver_fujitsu:
 
 {%- endif %}
 
-{%- endif %}
+{%- endfor %}
 
 {%- endif %}
 
