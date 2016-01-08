@@ -41,7 +41,7 @@ enabled_backends={% for backend_name, backend in controller.get('backend', {}).i
 
 default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
 
-enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if controller.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
 
 {%- endif %}
 
@@ -81,8 +81,6 @@ log_dir=/var/log/cinder
 use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
-
-enabled_backends={% for type in controller.get('types', []) %}{{ type.name }}{% if not loop.last %},{% endif %}{% endfor %}
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder

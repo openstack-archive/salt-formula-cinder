@@ -41,7 +41,7 @@ enabled_backends={% for backend_name, backend in controller.get('backend', {}).i
 
 default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
 
-enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if controller.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
 
 {%- endif %}
 

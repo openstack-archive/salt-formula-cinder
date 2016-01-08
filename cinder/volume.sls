@@ -46,7 +46,7 @@ cinder_volume_services:
 
 {# new way #}
 
-{%- if volume.backend.engine is defined %}
+{%- if volume.backend is defined %}
 
 {%- if volume.backend.engine == 'iscsi' %}
 
@@ -123,6 +123,8 @@ cinder_driver_fujitsu:
     - pkg: cinder-driver-fujitsu
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
 
