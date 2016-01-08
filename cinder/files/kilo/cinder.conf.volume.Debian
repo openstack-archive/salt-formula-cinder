@@ -83,8 +83,6 @@ log_dir=/var/log/cinder
 use_syslog=false
 verbose=True
 
-enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
-
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
