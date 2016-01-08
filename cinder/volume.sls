@@ -48,9 +48,11 @@ cinder_volume_services:
 
 {%- if volume.backend is defined %}
 
-{%- if volume.backend.engine == 'iscsi' %}
+{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
 
-cinder_iscsi_packages:
+{%- if backend.engine == 'iscsi' %}
+
+cinder_iscsi_packages_{{ loop.index }}:
   pkg.installed:
   - names:
     - iscsitarget
@@ -77,7 +79,7 @@ cinder_scsi_service:
 
 {%- endif %}
 
-{%- if volume.backend.engine == 'hitachi_vsp' %}
+{%- if backend.engine == 'hitachi_vsp' %}
 
 {%- if grains.os_family == 'Debian' and volume.version == 'juno' %}
 
@@ -97,7 +99,7 @@ cinder_hitachi_vps_dir:
 
 {%- endif %}
 
-{%- if volume.backend.engine == 'hp3par' %}
+{%- if backend.engine == 'hp3par' %}
 
 hp3parclient:
   pkg.latest:
@@ -105,7 +107,7 @@ hp3parclient:
 
 {%- endif %}
 
-{%- if volume.backend.engine == 'fujitsu' %}
+{%- if backend.engine == 'fujitsu' %}
 
 cinder_driver_fujitsu:
   pkg.latest:
@@ -123,6 +125,8 @@ cinder_driver_fujitsu:
     - pkg: cinder-driver-fujitsu
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
 
