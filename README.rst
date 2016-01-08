@@ -15,6 +15,7 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
       controller:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -36,17 +37,24 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS
+        backend:
+          7k2_SAS:
+            engine: storwize
+            name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
     cinder:
       volume:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -68,12 +76,18 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS    
+        backend:
+          7k2_SAS:
+            engine: storwize
+            name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
 Cinder setup with zeroing deleted volumes
 
@@ -102,6 +116,7 @@ Default Cinder setup with iSCSI target
       controller:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -123,12 +138,18 @@ Default Cinder setup with iSCSI target
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS
+        backend:
+          7k2_SAS:
+            engine: storwize
+            name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
 Cinder setup for IBM Storwize
 

@@ -33,7 +33,7 @@ volume_backend_name=DEFAULT
 
 {%- if controller.backend is defined %}
 
-default_volume_type={% for backend_name, backend in controller.get('backend', {}).iteritems() %}{% if loop.first %}{{ backend_name }}{% endif %}{% endfor %}
+default_volume_type={{ controller.default_volume_type }}
 
 enabled_backends={% for backend_name, backend in controller.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
 

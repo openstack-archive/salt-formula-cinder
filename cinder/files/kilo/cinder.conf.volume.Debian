@@ -33,7 +33,7 @@ volume_backend_name=DEFAULT
 
 {%- if volume.backend is defined %}
 
-default_volume_type={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{% if loop.first %}{{ backend_name }}{% endif %}{% endfor %}
+default_volume_type={{ volume.default_volume_type }}
 
 enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
 
