@@ -40,7 +40,7 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
         backend:
           7k2_SAS:
             engine: storwize
-            name: 7k2 SAS disk
+            type_name: slow-disks
             host: 192.168.0.1
             port: 22
             user: username
@@ -79,7 +79,7 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
         backend:
           7k2_SAS:
             engine: storwize
-            name: 7k2 SAS disk
+            type_name: 7k2 SAS disk
             host: 192.168.0.1
             port: 22
             user: username
@@ -141,7 +141,7 @@ Default Cinder setup with iSCSI target
         backend:
           7k2_SAS:
             engine: storwize
-            name: 7k2 SAS disk
+            type_name: 7k2 SAS disk
             host: 192.168.0.1
             port: 22
             user: username
@@ -161,7 +161,7 @@ Cinder setup for IBM Storwize
         backend:
           7k2_SAS:
             engine: storwize
-            name: 7k2 SAS disk
+            type_name: 7k2 SAS disk
             host: 192.168.0.1
             port: 22
             user: username
@@ -172,7 +172,7 @@ Cinder setup for IBM Storwize
             pool: SAS7K2
           10k_SAS:
             engine: storwize
-            name: 10k SAS disk
+            type_name: 10k SAS disk
             host: 192.168.0.1
             port: 22
             user: username
@@ -183,6 +183,7 @@ Cinder setup for IBM Storwize
             pool: SAS10K
           15k_SAS:
             engine: storwize
+            type_name: 15k SAS
             host: 192.168.0.1
             port: 22
             user: username
@@ -215,7 +216,7 @@ Cinder setup with CEPH
         enabled: true
         backend:
           ceph_backend:
-            name: standard-iops
+            type_name: standard-iops
             backend: ceph_backend
             pool: volumes
             engine: ceph
@@ -235,7 +236,7 @@ Cinder setup with HP3par
         enabled: true
         backend:
           hp3par_backend:
-            name: hp3par
+            type_name: hp3par
             backend: hp3par_backend
             user: hp3paruser
             password: something
@@ -256,7 +257,7 @@ Cinder setup with Fujitsu Eternus
         enabled: true
         backend:
           10kThinPro:
-            name: 10kThinPro
+            type_name: 10kThinPro
             engine: fujitsu
             pool: 10kThinPro
             host: 192.168.0.1
@@ -265,7 +266,7 @@ Cinder setup with Fujitsu Eternus
             password: pass
             connection: FC/iSCSI
           10k_SAS:
-            name: 10k_SAS
+            type_name: 10k_SAS
             pool: SAS10K
             engine: fujitsu
             host: 192.168.0.1
@@ -283,11 +284,11 @@ Cinder setup with IBM GPFS filesystem
         enabled: true
         backend:
           GPFS-GOLD:
-            name: GPFS-GOLD
+            type_name: GPFS-GOLD
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/gold'
           GPFS-SILVER
-            name: GPFS-SILVER
+            type_name: GPFS-SILVER
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/silver'
         
