@@ -134,7 +134,7 @@ cinder_driver_fujitsu:
 
 {# old way #}
 
-{%- if volume.storage.engine is defined %}
+{%- if volume.storage is defined %}
 
 {%- if volume.storage.engine == 'iscsi' %}
 
