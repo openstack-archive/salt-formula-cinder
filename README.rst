@@ -291,7 +291,24 @@ Cinder setup with IBM GPFS filesystem
             type_name: GPFS-SILVER
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/silver'
-        
+  
+Cinder setup with HP LeftHand
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        enabled: true
+        backend:
+          HP-LeftHand:
+            type_name: normal-storage
+            engine: hp_lefthand
+            api_url: 'https://10.10.10.10:8081/lhos'
+            username: user
+            password: password
+            clustername: cluster1
+            iscsi_chap_enabled: false
+
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder
