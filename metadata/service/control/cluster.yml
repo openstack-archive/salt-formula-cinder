@@ -32,7 +32,3 @@ parameters:
         password: ${_param:rabbitmq_openstack_password}
         virtual_host: '/openstack'
         ha_queues: true
-      storage:
-        engine: iscsi
-        host: localhost
-      types: []

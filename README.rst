@@ -15,6 +15,7 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
       controller:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -36,17 +37,24 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS
+        backend:
+          7k2_SAS:
+            engine: storwize
+            type_name: slow-disks
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
     cinder:
       volume:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -68,12 +76,18 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS    
+        backend:
+          7k2_SAS:
+            engine: storwize
+            type_name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
 Cinder setup with zeroing deleted volumes
 
@@ -102,6 +116,7 @@ Default Cinder setup with iSCSI target
       controller:
         enabled: true
         version: juno
+        default_volume_type: 7k2SaS
         database:
           engine: mysql
           host: 127.0.0.1
@@ -123,39 +138,60 @@ Default Cinder setup with iSCSI target
           user: openstack
           password: pwd
           virtual_host: '/openstack'
-        storage:
-          engine: file
-        types:
-        - name: 7k2_SAS
-        - name: 10k_SAS
-        - name: 15k_SAS
+        backend:
+          7k2_SAS:
+            engine: storwize
+            type_name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
 
-Cinder setup with IBM Storwize
+Cinder setup for IBM Storwize
 
 .. code-block:: yaml
 
     cinder:
-      controller:
+      volume:
         enabled: true
-        types:
-        - name: 7k2_SAS
-          engine: storwize
-          pool: SAS7K2
-        - name: 10k_SAS
-          pool: SAS10K
-          engine: storwize
-        - name: 15k_SAS
-          pool: SAS15K
-          engine: storwize
-        storage:
-          engine: storwize
-          host: 192.168.0.1
-          port: 22
-          user: username
-          password: pass
-          connection: FC/iSCSI
-          multihost: true
-          multipath: true
+        backend:
+          7k2_SAS:
+            engine: storwize
+            type_name: 7k2 SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS7K2
+          10k_SAS:
+            engine: storwize
+            type_name: 10k SAS disk
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS10K
+          15k_SAS:
+            engine: storwize
+            type_name: 15k SAS
+            host: 192.168.0.1
+            port: 22
+            user: username
+            password: pass
+            connection: FC/iSCSI
+            multihost: true
+            multipath: true
+            pool: SAS15K
 
 Cinder setup with Hitachi VPS
 
@@ -164,12 +200,12 @@ Cinder setup with Hitachi VPS
     cinder:
       controller:
         enabled: true
-        types:
-        - name: HUS100
-          backend: hus100_backend
-        storage:
-          engine: hitachi_vsp
-          connection: FC
+        backend:
+          hus100_backend:
+            name: HUS100
+            backend: hus100_backend
+            engine: hitachi_vsp
+            connection: FC
 
 Cinder setup with CEPH
 
@@ -178,15 +214,15 @@ Cinder setup with CEPH
     cinder:
       controller:
         enabled: true
-        types:
-        - name: ceph
-          backend: ceph_backend
-          pool: volumes
-        storage:
-          engine: ceph
-          user: cinder
-          secret_uuid: da74ccb7-aa59-1721-a172-0006b1aa4e3e
-          client_cinder_key: AQDOavlU6BsSJhAAnpFR906mvdgdfRqLHwu0Uw==
+        backend:
+          ceph_backend:
+            type_name: standard-iops
+            backend: ceph_backend
+            pool: volumes
+            engine: ceph
+            user: cinder
+            secret_uuid: da74ccb7-aa59-1721-a172-0006b1aa4e3e
+            client_cinder_key: AQDOavlU6BsSJhAAnpFR906mvdgdfRqLHwu0Uw==
 
 http://ceph.com/docs/master/rbd/rbd-openstack/
 
@@ -198,19 +234,19 @@ Cinder setup with HP3par
     cinder:
       controller:
         enabled: true
-        types:
-        - name: hp3par
-          backend: hp3par_backend
-        storage:
-          user: hp3paruser
-          password: something
-          url: http://10.10.10.10/api/v1
-          cpg: OpenStackCPG
-          host: 10.10.10.10
-          login: hp3paradmin
-          sanpassword: something
-          debug: True
-          snapcpg: OpenStackSNAPCPG
+        backend:
+          hp3par_backend:
+            type_name: hp3par
+            backend: hp3par_backend
+            user: hp3paruser
+            password: something
+            url: http://10.10.10.10/api/v1
+            cpg: OpenStackCPG
+            host: 10.10.10.10
+            login: hp3paradmin
+            sanpassword: something
+            debug: True
+            snapcpg: OpenStackSNAPCPG
 
 Cinder setup with Fujitsu Eternus
 
@@ -219,20 +255,25 @@ Cinder setup with Fujitsu Eternus
     cinder:
       volume:
         enabled: true
-        types:
-        - name: 10kThinPro
-          engine: fujitsu
-          pool: 10kThinPro
-        - name: 10k_SAS
-          pool: SAS10K
-          engine: fujitsu
-        storage:
-          engine: fujitsu
-          host: 192.168.0.1
-          port: 5988
-          user: username
-          password: pass
-          connection: FC/iSCSI
+        backend:
+          10kThinPro:
+            type_name: 10kThinPro
+            engine: fujitsu
+            pool: 10kThinPro
+            host: 192.168.0.1
+            port: 5988
+            user: username
+            password: pass
+            connection: FC/iSCSI
+          10k_SAS:
+            type_name: 10k_SAS
+            pool: SAS10K
+            engine: fujitsu
+            host: 192.168.0.1
+            port: 5988
+            user: username
+            password: pass
+            connection: FC/iSCSI
 
 Cinder setup with IBM GPFS filesystem
 
@@ -241,16 +282,16 @@ Cinder setup with IBM GPFS filesystem
     cinder:
       volume:
         enabled: true
-        types:
-        - name: GPFS-GOLD
-          engine: gpfs
-          mount_point: '/mnt/gpfs-openstack/cinder/gold'
-        - name: GPFS-SILVER
-          engine: gpfs
-          mount_point: '/mnt/gpfs-openstack/cinder/silver'
-        storage:
-          engine: gpfs
-
+        backend:
+          GPFS-GOLD:
+            type_name: GPFS-GOLD
+            engine: gpfs
+            mount_point: '/mnt/gpfs-openstack/cinder/gold'
+          GPFS-SILVER
+            type_name: GPFS-SILVER
+            engine: gpfs
+            mount_point: '/mnt/gpfs-openstack/cinder/silver'
+        
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder

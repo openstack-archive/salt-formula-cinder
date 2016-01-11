@@ -30,7 +30,20 @@ glance_port={{ controller.glance.port }}
 glance_api_version=2
 
 volume_backend_name=DEFAULT
+
+{%- if controller.backend is defined %}
+
+default_volume_type={{ controller.default_volume_type }}
+
+enabled_backends={% for backend_name, backend in controller.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
+
+{%- else %}
+
 default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
+
+enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if controller.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+
+{%- endif %}
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
@@ -69,8 +82,6 @@ use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
 
-enabled_backends={% for type in controller.get('types', []) %}{{ type.name }}{% if not loop.last %},{% endif %}{% endfor %}
-
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
 admin_password={{ controller.identity.password }}
@@ -88,6 +99,21 @@ max_pool_size=30
 max_retries=-1
 max_overflow=40
 connection = {{ controller.database.engine }}://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}
+
+{# new way #}
+
+{%- if controller.backend is defined %}
+
+{%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
+
+{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + ".conf" %}
+{%- include backend_fragment %}
+
+{%- endfor %}
+
+{%- else %}
+
+{# old way #}
 
 {%- if controller.storage.engine == "storwize" %}
 
@@ -329,5 +355,7 @@ volume_driver=cinder.volume.drivers.fujitsu.fujitsu_eternus_dx_fc.FJDXFCDriver
 cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
