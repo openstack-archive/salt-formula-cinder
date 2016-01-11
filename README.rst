@@ -310,8 +310,27 @@ Cinder setup with HP LeftHand
             iscsi_chap_enabled: false
 
 Extra parameters for HP LeftHand
-cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full
 
+.. code-block:: yaml
+
+    cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full 
+
+Cinder setup with HP LeftHand
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        enabled: true
+        backend:
+          solidfire:
+            type_name: normal-storage
+            engine: solidfire
+            san_ip: 10.10.10.10
+            san_login: user
+            san_password: password
+            clustername: cluster1
+            sf_emulate_512: false
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder
