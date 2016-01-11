@@ -309,6 +309,9 @@ Cinder setup with HP LeftHand
             clustername: cluster1
             iscsi_chap_enabled: false
 
+Extra parameters for HP LeftHand
+cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full
+
 ## Read more
 
 * https://wiki.openstack.org/wiki/Cinder
