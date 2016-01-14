@@ -59,12 +59,12 @@ paste.filter_factory = cinder.api.middleware.auth:CinderKeystoneContext.factory
 [filter:authtoken]
 paste.filter_factory = keystonemiddleware.auth_token:filter_factory
 service_port=5000
-service_host={{ pillar.cinder.volume.identity.host }}
+service_host={{ volume.identity.host }}
 service_protocol=http
-auth_host = {{ pillar.cinder.volume.identity.host }}
-auth_port = {{ pillar.cinder.volume.identity.port }}
+auth_host = {{ volume.identity.host }}
+auth_port = {{ volume.identity.port }}
 auth_protocol = http
-admin_tenant_name = {{ pillar.cinder.volume.identity.tenant }}
-admin_user = {{ pillar.cinder.volume.identity.user }}
-admin_password = {{ pillar.cinder.volume.identity.password }}
-auth_uri=http://{{ pillar.cinder.volume.identity.host }}:5000/
+admin_tenant_name = {{ volume.identity.tenant }}
+admin_user = {{ volume.identity.user }}
+admin_password = {{ volume.identity.password }}
+auth_uri=http://{{ volume.identity.host }}:5000/{% if volume.identity.get('version', 2) == 3 %}v3{% endif %}

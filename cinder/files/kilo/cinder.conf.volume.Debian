@@ -97,6 +97,8 @@ rabbit_virtual_host = {{ volume.message_queue.virtual_host }}
 rabbit_ha_queues={{ volume.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
 
+{%- if volume.identity.get('version', 2) == 2 %}
+
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
 admin_password={{ volume.identity.password }}
@@ -107,6 +109,27 @@ auth_protocol=http
 admin_user=cinder
 signing_dirname=/tmp/keystone-signing-cinder
 auth_uri=http://{{ volume.identity.host }}:{{ volume.identity.port }}
+
+{%- else %}
+
+[keystone_authtoken]
+signing_dir=/tmp/keystone-signing-cinder
+signing_dirname=/tmp/keystone-signing-cinder
+identity_uri = http://{{ volume.identity.host }}:35357/v3
+revocation_cache_time = 10
+auth_section = generic_password
+
+[generic_password]
+auth_plugin = password
+user_domain_id = {{ volume.identity.get('domain', 'default') }}
+project_domain_id = {{ volume.identity.get('domain', 'default') }}
+project_name = {{ volume.identity.tenant }}
+username = {{ volume.identity.user }}
+password = {{ volume.identity.password }}
+auth_uri=http://{{ volume.identity.host }}:5000/v3
+auth_url=http://{{ volume.identity.host }}:35357/v3
+
+{%- endif %}
 
 [database]
 idle_timeout=3600
