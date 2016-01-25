@@ -109,13 +109,11 @@ hp3parclient:
 
 {%- if backend.engine == 'fujitsu' %}
 
-cinder_driver_fujitsu:
+cinder_driver_fujitsu_{{ loop.index }}:
   pkg.latest:
     - name: cinder-driver-fujitsu
 
-{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
-
-/etc/cinder/cinder_fujitsu_eternus_dx_{{ backend.name }}.xml:
+/etc/cinder/cinder_fujitsu_eternus_dx_{{ backend_name }}.xml:
   file.managed:
   - source: salt://cinder/files/{{ volume.version }}/cinder_fujitsu_eternus_dx.xml
   - template: jinja
@@ -123,8 +121,6 @@ cinder_driver_fujitsu:
       volume_type_name: "{{ backend.pool }}"
   - require:
     - pkg: cinder-driver-fujitsu
-
-{%- endfor %}
 
 {%- endif %}
 

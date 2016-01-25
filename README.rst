@@ -202,7 +202,7 @@ Cinder setup with Hitachi VPS
         enabled: true
         backend:
           hus100_backend:
-            name: HUS100
+            type_name: HUS100
             backend: hus100_backend
             engine: hitachi_vsp
             connection: FC
@@ -265,6 +265,7 @@ Cinder setup with Fujitsu Eternus
             user: username
             password: pass
             connection: FC/iSCSI
+            name: 10kThinPro
           10k_SAS:
             type_name: 10k_SAS
             pool: SAS10K
@@ -274,6 +275,7 @@ Cinder setup with Fujitsu Eternus
             user: username
             password: pass
             connection: FC/iSCSI
+            name: 10k_SAS
 
 Cinder setup with IBM GPFS filesystem
 
@@ -287,7 +289,7 @@ Cinder setup with IBM GPFS filesystem
             type_name: GPFS-GOLD
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/gold'
-          GPFS-SILVER
+          GPFS-SILVER:
             type_name: GPFS-SILVER
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/silver'
@@ -315,7 +317,7 @@ Extra parameters for HP LeftHand
 
     cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full 
 
-Cinder setup with HP LeftHand
+Cinder setup with Solidfire
 
 .. code-block:: yaml
 
