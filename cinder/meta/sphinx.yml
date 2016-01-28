@@ -54,9 +54,6 @@ doc:
         version:
           name: "Version"
           value: {{ volume.version }}
-        glance_host:
-          name: "Glance service"
-          value: {{ volume.glance.host }}:{{ volume.glance.port }}
         database_host:
           name: "Database"
           value: {{ volume.database.user }}@{{ volume.database.host }}:{{ volume.database.port }}//{{ volume.database.name }}
