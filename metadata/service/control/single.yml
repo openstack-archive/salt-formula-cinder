@@ -8,29 +8,29 @@ parameters:
       enabled: true
       version: ${_param:cinder_version}
       osapi:
-        host: ${linux:network:host:local:address}
+        host: ${_param:single_address}
       database:
         engine: mysql
         host:  localhost
         port: 3306
         name: cinder
         user: cinder
-        password: ${_secret:mysql_cinder_password}
+        password: ${_param:mysql_cinder_password}
       identity:
         engine: keystone
-        host: ${linux:network:host:local:address}
+        host: ${_param:single_address}
         port: 35357
         tenant: service
         user: cinder
-        password: ${_secret:keystone_cinder_password}
+        password: ${_param:keystone_cinder_password}
       glance:
-        host: ${linux:network:host:local:address}
+        host: ${_param:single_address}
         port: 9292
       message_queue:
         engine: rabbitmq
-        host: ${linux:network:host:local:address}
+        host: ${_param:single_address}
         port: 5672
         user: openstack
-        password: ${_secret:rabbitmq_openstack_password}
+        password: ${_param:rabbitmq_openstack_password}
         virtual_host: '/openstack'
         ha_queues: false
