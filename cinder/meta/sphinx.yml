@@ -51,9 +51,11 @@ doc:
     volume:
       name: volume
       param:
+        {%- if pillar.cinder.volume.version is defined %}
         version:
           name: "Version"
           value: {{ volume.version }}
+        {%- endif %}
         {%- if pillar.cinder.volume.database is defined %}
         database_host:
           name: "Database"
