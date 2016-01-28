@@ -54,15 +54,21 @@ doc:
         version:
           name: "Version"
           value: {{ volume.version }}
+        {%- if pillar.cinder.volume.database is defined %}
         database_host:
           name: "Database"
           value: {{ volume.database.user }}@{{ volume.database.host }}:{{ volume.database.port }}//{{ volume.database.name }}
+        {%- endif %}
+        {%- if pillar.cinder.volume.message_queue is defined %}
         message_queue_ip:
           name: "Message queue"
           value: {{ volume.message_queue.user }}@{{ volume.message_queue.host }}:{{ volume.message_queue.port }}{{ volume.message_queue.virtual_host }}
+        {%- endif %}
+        {%- if pillar.cinder.volume.identity is defined %}
         identity_host:
           name: "Identity service"
           value: {{ volume.identity.user }}@{{ volume.identity.host }}:{{ volume.identity.port }}
+        {%- endif %}
         packages:
           value: |
             {%- for pkg in volume.pkgs %}
