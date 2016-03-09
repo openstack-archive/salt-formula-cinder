@@ -13,6 +13,7 @@ cinder:
       password: password
     identity:
       engine: keystone
+      region: RegionOne
       host: 127.0.0.1
       port: 35357
       tenant: service

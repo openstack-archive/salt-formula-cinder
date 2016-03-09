@@ -20,6 +20,8 @@ use_syslog=False
 glance_num_retries=0
 debug=False
 
+os_region_name={{ volume.identity.region }}
+
 #glance_api_ssl_compression=False
 #glance_api_insecure=False
 

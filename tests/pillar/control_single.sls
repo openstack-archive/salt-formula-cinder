@@ -14,6 +14,7 @@ cinder:
     identity:
       engine: keystone
       host: 127.0.0.1
+      region: RegionOne
       port: 35357
       tenant: service
       user: cinder

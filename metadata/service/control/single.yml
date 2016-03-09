@@ -18,6 +18,7 @@ parameters:
         password: ${_param:mysql_cinder_password}
       identity:
         engine: keystone
+        region: RegionOne
         host: ${_param:single_address}
         port: 35357
         tenant: service
