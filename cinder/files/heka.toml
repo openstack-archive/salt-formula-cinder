@@ -2,7 +2,7 @@
 type = "LogstreamerInput"
 log_directory = "/var/log/cinder"
 file_match = '(?P<Service>.+)\.log\.?(?P<Seq>\d*)$'
-differentiator = ["'cinder','_','Service'"]
+differentiator = ['cinder','_','Service']
 priority = ["^Index"]
 decoder = "openstack"
 
