@@ -30,3 +30,12 @@ cinder:
       password: password
       virtual_host: '/openstack'
       ha_queues: true
+    cache:
+      engine: memcached
+      members:
+      - host: 127.0.0.1
+        port: 11211
+      - host: 127.0.0.1
+        port: 11211
+      - host: 127.0.0.1
+        port: 11211

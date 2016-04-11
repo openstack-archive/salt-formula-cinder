@@ -115,8 +115,8 @@ Default Cinder setup with iSCSI target
     cinder:
       controller:
         enabled: true
-        version: juno
-        default_volume_type: 7k2SaS
+        version: mitaka
+        default_volume_type: lvmdriver-1
         database:
           engine: mysql
           host: 127.0.0.1
@@ -139,17 +139,10 @@ Default Cinder setup with iSCSI target
           password: pwd
           virtual_host: '/openstack'
         backend:
-          7k2_SAS:
-            engine: storwize
-            type_name: 7k2 SAS disk
-            host: 192.168.0.1
-            port: 22
-            user: username
-            password: pass
-            connection: FC/iSCSI
-            multihost: true
-            multipath: true
-            pool: SAS7K2
+          lvmdriver-1:
+            engine: lvm
+            type_name: lvmdriver-1
+            volume_group: cinder-volume
 
 Cinder setup for IBM Storwize
 

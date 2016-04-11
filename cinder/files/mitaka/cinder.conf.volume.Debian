@@ -1,0 +1,117 @@
+{%- from "cinder/map.jinja" import volume with context %}
+
+[DEFAULT]
+rootwrap_config = /etc/cinder/rootwrap.conf
+api_paste_confg = /etc/cinder/api-paste.ini
+
+iscsi_helper = tgtadm
+volume_name_template = volume-%s
+#volume_group = cinder
+
+verbose = True
+
+auth_strategy = keystone
+
+state_path = /var/lib/cinder
+
+use_syslog=False
+
+glance_num_retries=0
+debug=False
+
+os_region_name={{ volume.identity.region }}
+
+#glance_api_ssl_compression=False
+#glance_api_insecure=False
+
+osapi_volume_listen={{ volume.osapi.host }}
+
+glance_host={{ volume.glance.host }}
+glance_port={{ volume.glance.port }}
+glance_api_version=2
+
+volume_backend_name=DEFAULT
+
+{%- if volume.backend is defined %}
+
+default_volume_type={{ volume.default_volume_type }}
+
+enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
+
+{%- endif %}
+
+#RPC response timeout recommended by Hitachi
+rpc_response_timeout=3600
+
+#Rabbit
+rpc_backend=cinder.openstack.common.rpc.impl_kombu
+control_exchange=cinder
+
+
+volume_clear={{ volume.wipe_method }}
+
+
+volume_name_template = volume-%s
+
+#volume_group = vg_cinder_volume
+
+volumes_dir = /var/lib/cinder/volumes
+log_dir=/var/log/cinder
+
+# Use syslog for logging. (boolean value)
+#use_syslog=false
+
+use_syslog=false
+verbose=True
+
+[oslo_messaging_notifications]
+{%- if volume.notification %}
+driver = messagingv2
+{%- endif %}
+
+[oslo_concurrency]
+
+lock_path=/var/lock/cinder
+
+[oslo_messaging_rabbit]
+
+rabbit_host = {{ volume.message_queue.host }}
+rabbit_port = {{ volume.message_queue.port }}
+rabbit_userid = {{ volume.message_queue.user }}
+rabbit_password = {{ volume.message_queue.password }}
+rabbit_virtual_host = {{ volume.message_queue.virtual_host }}
+rabbit_ha_queues={{ volume.message_queue.ha_queues }}
+kombu_reconnect_delay=5.0
+
+[keystone_authtoken]
+signing_dir=/tmp/keystone-signing-cinder
+revocation_cache_time = 10
+auth_type = password
+user_domain_id = {{ volume.identity.get('domain', 'default') }}
+project_domain_id = {{ volume.identity.get('domain', 'default') }}
+project_name = {{ volume.identity.tenant }}
+username = {{ volume.identity.user }}
+password = {{ volume.identity.password }}
+auth_uri=http://{{ volume.identity.host }}:5000/v3
+auth_url=http://{{ volume.identity.host }}:35357/v3
+{%- if volume.cache is defined %}
+memcached_servers={%- for member in volume.cache.members %}{{ member.host }}:11211{% if not loop.last %},{% endif %}{%- endfor %}
+{%- endif %}
+
+[database]
+idle_timeout=3600
+max_pool_size=30
+max_retries=-1
+max_overflow=40
+connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}
+
+{%- if volume.backend is defined %}
+
+{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
+
+{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + ".conf" %}
+{%- include backend_fragment %}
+
+{%- endfor %}
+
+{%- endif %}
