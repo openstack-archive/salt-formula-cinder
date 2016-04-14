@@ -1,2 +1,0 @@
-cinder/*             /usr/share/salt-formulas/env/cinder/
-metadata/service/*      /usr/share/salt-formulas/reclass/service/cinder/
