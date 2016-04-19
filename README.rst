@@ -88,6 +88,43 @@ New structure divides cinder-api,cinder-scheduler to role controller and cinder-
             multihost: true
             multipath: true
             pool: SAS7K2
+            w
+
+Client-side RabbitMQ HA setup for controller
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        ....
+        message_queue:
+          engine: rabbitmq
+          members:
+            - host: 10.0.16.1
+            - host: 10.0.16.2
+            - host: 10.0.16.3
+          user: openstack
+          password: pwd
+          virtual_host: '/openstack'
+        ....
+
+Client-side RabbitMQ HA setup for volume component
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        ....
+        message_queue:
+          engine: rabbitmq
+          members:
+            - host: 10.0.16.1
+            - host: 10.0.16.2
+            - host: 10.0.16.3
+          user: openstack
+          password: pwd
+          virtual_host: '/openstack'
+        ....
 
 Cinder setup with zeroing deleted volumes
 

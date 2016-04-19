@@ -77,13 +77,23 @@ use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
 
+
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
 
+
 [oslo_messaging_rabbit]
+{%- if controller.message_queue.members is defined %}
+rabbit_hosts = {% for member in controller.message_queue.members -%}
+                   {{ member.host }}:{{ member.get('port', 5672) }}
+                   {%- if not loop.last -%},{%- endif -%}
+               {%- endfor -%}
+{%- else %}
 rabbit_host = {{ controller.message_queue.host }}
 rabbit_port = {{ controller.message_queue.port }}
+{%- endif %}
+
 rabbit_userid = {{ controller.message_queue.user }}
 rabbit_password = {{ controller.message_queue.password }}
 rabbit_virtual_host = {{ controller.message_queue.virtual_host }}
@@ -91,6 +101,7 @@ rabbit_ha_queues={{ controller.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
 
 {%- if controller.identity.get('version', 2) == 2 %}
+
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
@@ -105,12 +116,14 @@ auth_uri=http://{{ controller.identity.host }}:{{ controller.identity.port }}
 
 {%- else %}
 
+
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
 signing_dirname=/tmp/keystone-signing-cinder
 identity_uri = http://{{ controller.identity.host }}:35357/v3
 revocation_cache_time = 10
 auth_section = generic_password
+
 
 [generic_password]
 auth_plugin = password
@@ -123,6 +136,7 @@ auth_uri=http://{{ controller.identity.host }}:5000/v3
 auth_url=http://{{ controller.identity.host }}:35357/v3
 
 {%- endif %}
+
 
 [database]
 idle_timeout=3600
