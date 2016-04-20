@@ -82,8 +82,16 @@ lock_path=/var/lock/cinder
 lock_path=/var/lock/cinder
 
 [oslo_messaging_rabbit]
+{%- if controller.message_queue.members is defined %}
+rabbit_hosts = {% for member in controller.message_queue.members -%}
+                   {{ member.host }}:{{ member.get('port', 5672) }}
+                   {%- if not loop.last -%},{%- endif -%}
+               {%- endfor -%}
+{%- else %}
 rabbit_host = {{ controller.message_queue.host }}
 rabbit_port = {{ controller.message_queue.port }}
+{%- endif %}
+
 rabbit_userid = {{ controller.message_queue.user }}
 rabbit_password = {{ controller.message_queue.password }}
 rabbit_virtual_host = {{ controller.message_queue.virtual_host }}

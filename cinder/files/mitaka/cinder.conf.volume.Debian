@@ -74,9 +74,16 @@ driver = messagingv2
 lock_path=/var/lock/cinder
 
 [oslo_messaging_rabbit]
-
+{%- if volume.message_queue.members is defined %}
+rabbit_hosts = {% for member in volume.message_queue.members -%}
+                   {{ member.host }}:{{ member.get('port', 5672) }}
+                   {%- if not loop.last -%},{%- endif -%}
+               {%- endfor -%}
+{%- else %}
 rabbit_host = {{ volume.message_queue.host }}
 rabbit_port = {{ volume.message_queue.port }}
+{%- endif %}
+
 rabbit_userid = {{ volume.message_queue.user }}
 rabbit_password = {{ volume.message_queue.password }}
 rabbit_virtual_host = {{ volume.message_queue.virtual_host }}
