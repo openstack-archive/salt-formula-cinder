@@ -95,7 +95,6 @@ rabbit_port = {{ controller.message_queue.port }}
 rabbit_userid = {{ controller.message_queue.user }}
 rabbit_password = {{ controller.message_queue.password }}
 rabbit_virtual_host = {{ controller.message_queue.virtual_host }}
-rabbit_ha_queues={{ controller.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
 
 {%- if controller.identity.get('version', 2) == 2 %}

@@ -34,7 +34,6 @@ parameters:
         user: openstack
         password: ${_param:rabbitmq_openstack_password}
         virtual_host: '/openstack'
-        ha_queues: true
       cache:
         engine: memcached
         members:
