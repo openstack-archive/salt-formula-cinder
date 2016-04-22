@@ -29,4 +29,3 @@ cinder:
       user: openstack
       password: password
       virtual_host: '/openstack'
-      ha_queues: false

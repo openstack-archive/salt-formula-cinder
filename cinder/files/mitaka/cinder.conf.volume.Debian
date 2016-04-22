@@ -87,7 +87,6 @@ rabbit_port = {{ volume.message_queue.port }}
 rabbit_userid = {{ volume.message_queue.user }}
 rabbit_password = {{ volume.message_queue.password }}
 rabbit_virtual_host = {{ volume.message_queue.virtual_host }}
-rabbit_ha_queues={{ volume.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
 
 [keystone_authtoken]
