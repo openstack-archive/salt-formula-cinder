@@ -1,0 +1,11 @@
+orchestrate:
+  controller:
+    priority: 540
+    batch: 1
+    require:
+    - salt: keystone.server
+  volume:
+    priority: 550
+    require:
+    - salt: cinder.controller
+
