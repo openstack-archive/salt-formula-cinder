@@ -1,10 +1,11 @@
 [logstreamer_cinder]
 type = "LogstreamerInput"
 log_directory = "/var/log/cinder"
-file_match = '(?P<Service>.+)\.log\.?(?P<Seq>\d*)$'
+file_match = '(?P<Service>.+)\.log\.?(?P<Index>\d*)?(.gz)?'
 differentiator = ['cinder','_','Service']
 priority = ["^Index"]
 decoder = "openstack"
+oldest_duration = "168h"
 
 [openstack]
 type = "SandboxDecoder"
