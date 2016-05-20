@@ -2,12 +2,15 @@
 Openstack Cinder Block Storage
 ==============================
 
-Cinder provides an infrastructure for managing volumes in OpenStack. It was originally a Nova component called nova-volume, but has become an independent project since the Folsom release.
+Cinder provides an infrastructure for managing volumes in OpenStack. It was
+originally a Nova component called nova-volume, but has become an independent
+project since the Folsom release.
 
 Sample pillars
 ==============
 
-New structure divides cinder-api,cinder-scheduler to role controller and cinder-volume to role volume.
+New structure divides cinder-api,cinder-scheduler to role controller and
+cinder-volume to role volume.
 
 .. code-block:: yaml
 
@@ -363,7 +366,29 @@ Cinder setup with Solidfire
             san_password: password
             clustername: cluster1
             sf_emulate_512: false
-## Read more
 
-* https://wiki.openstack.org/wiki/Cinder
-* http://docs.openstack.org/juno/config-reference/content/hitachi-configuration.html
+Documentation and Bugs
+============================
+
+To learn how to deploy OpenStack Salt, consult the documentation available
+online at:
+
+    https://wiki.openstack.org/wiki/OpenStackSalt
+
+In the unfortunate event that bugs are discovered, they should be reported to
+the appropriate bug tracker. If you obtained the software from a 3rd party
+operating system vendor, it is often wise to use their own bug tracker for
+reporting problems. In all other cases use the master OpenStack bug tracker,
+available at:
+
+    http://bugs.launchpad.net/openstack-salt
+
+Developers wishing to work on the OpenStack Salt project should always base
+their work on the latest formulas code, available from the master GIT
+repository at:
+
+    https://git.openstack.org/cgit/openstack/salt-formula-cinder
+
+Developers should also join the discussion on the IRC list, at:
+
+    https://wiki.openstack.org/wiki/Meetings/openstack-salt
