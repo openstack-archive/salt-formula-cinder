@@ -22,6 +22,19 @@ cinder_controller_packages:
   - require:
     - pkg: cinder_controller_packages
 
+{%- if grains.get('virtual_subtype', None) == "Docker" %}
+
+cinder_entrypoint:
+  file.managed:
+  - name: /entrypoint.sh
+  - template: jinja
+  - source: salt://cinder/files/entrypoint.sh
+  - mode: 755
+
+{%- endif %}
+
+{%- if not grains.get('noservices', False) %}
+
 cinder_controller_services:
   service.running:
   - names: {{ controller.services }}
@@ -55,6 +68,8 @@ cinder_type_update_{{ backend_name }}:
     - cmd: cinder_type_create_{{ backend_name }}
 
 {%- endfor %}
+
+{%- endif %}
 
 {# old way #}
 
