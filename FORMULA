@@ -1,0 +1,8 @@
+name: cinder
+os: Debian, RedHat
+os_family: Debian, RedHat
+version: 201606
+release: 1
+summary: Formula for installing and configuring cinder
+description: Formula for installing and configuring cinder
+top_level_dir: cinder
