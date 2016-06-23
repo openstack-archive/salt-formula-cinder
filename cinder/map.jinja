@@ -1,7 +1,7 @@
 
 {% set controller = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['cinder-api', 'cinder-scheduler', 'lvm2', 'python-cinder', 'gettext-base'],
+        'pkgs': ['cinder-api', 'cinder-scheduler', 'lvm2', 'python-cinder', 'gettext-base', 'python-memcache'],
         'services': ['cinder-api', 'cinder-scheduler'],
         'wipe_method': 'none',
         'notification': False,
@@ -16,7 +16,7 @@
 
 {% set volume = salt['grains.filter_by']({
     'Debian': {
-        'pkgs': ['cinder-volume', 'lvm2', 'sysfsutils', 'sg3-utils', 'python-cinder','python-mysqldb','p7zip', 'gettext-base'],
+        'pkgs': ['cinder-volume', 'lvm2', 'sysfsutils', 'sg3-utils', 'python-cinder','python-mysqldb','p7zip', 'gettext-base', 'python-memcache'],
         'services': ['cinder-volume'],
         'wipe_method': 'none',
         'notification': False,
