@@ -122,7 +122,7 @@ cinder_driver_fujitsu_{{ loop.index }}:
   - source: salt://cinder/files/{{ volume.version }}/cinder_fujitsu_eternus_dx.xml
   - template: jinja
   - defaults:
-      volume_type_name: "{{ backend.pool }}"
+      backend_name: "{{ backend_name }}"
   - require:
     - pkg: cinder-driver-fujitsu
 
