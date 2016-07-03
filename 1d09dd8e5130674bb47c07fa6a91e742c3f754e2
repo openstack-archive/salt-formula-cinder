@@ -1,0 +1,9 @@
+Code-Review+1: Ales Komarek <ales.komarek@tcpcloud.eu>
+Code-Review+2: Jakub Pavlik <pavlk.jakub@gmail.com>
+Workflow+1: Jakub Pavlik <pavlk.jakub@gmail.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Sun, 03 Jul 2016 19:14:22 +0000
+Reviewed-on: https://review.openstack.org/336100
+Project: openstack/salt-formula-cinder
+Branch: refs/heads/master
