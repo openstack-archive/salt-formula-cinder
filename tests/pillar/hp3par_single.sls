@@ -2,6 +2,7 @@ cinder:
   controller:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       hp3par_backend:
         type_name: hp3par
@@ -15,9 +16,11 @@ cinder:
         sanpassword: password
         debug: True
         snapcpg: OpenStackSNAPCPG
+        engine: hp3par
   volume:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       hp3par_backend:
         type_name: hp3par
