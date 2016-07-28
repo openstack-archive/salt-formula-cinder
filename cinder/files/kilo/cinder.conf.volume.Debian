@@ -200,7 +200,7 @@ volume_backend_name={{ type.backend }}
 #
 # Serial number of storage system (string value)
 #hitachi_serial_number=<None>
-hitachi_serial_number=86644
+hitachi_serial_number={{ volume.storage.storage_id }}
 #hitachi_serial_number=355316
 
 # Name of an array unit (string value)
@@ -209,10 +209,10 @@ hitachi_serial_number=86644
 
 # Pool ID of storage system (integer value)
 #hitachi_pool_id=<None>
-hitachi_pool_id=4
+hitachi_pool_id={{ volume.storage.pool_id }}
 
 # Thin pool ID of storage system (integer value)
-hitachi_thin_pool_id=13
+hitachi_thin_pool_id={{ volume.storage.thin_pool_id }}
 
 # Default copy method of storage system (string value)
 #hitachi_default_copy_method=FULL
@@ -221,7 +221,7 @@ hitachi_default_copy_method=THIN
 # Control port names for HostGroup or iSCSI Target (string
 # value)
 #hitachi_target_ports=<None>
-hitachi_target_ports=CL1-E,CL2-E,CL3-B,CL4-D
+hitachi_target_ports={{ volume.storage.compute_target_ports }}
 
 # Request for creating HostGroup or iSCSI Target (boolean
 # value)
@@ -246,8 +246,7 @@ hitachi_horcm_user=root
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
-hitachi_horcm_password=X3tT35va
+hitachi_horcm_password={{ volume.storage.password }}
 
 # Add to HORCM configuration (boolean value)
 #hitachi_horcm_add_conf=true
@@ -269,14 +268,14 @@ volume_backend_name=hitachi_vsp
 # Serial number of storage system (string value)
 #hitachi_serial_number=<None>
 #hitachi_serial_number=86644
-hitachi_storage_id=86644
+hitachi_storage_id={{ volume.storage.storage_id }}
 
 # Pool ID of storage system (integer value)
 #hitachi_pool_id=<None>
-hitachi_pool=4
+hitachi_pool={{ volume.storage.pool_id }}
 
 # Thin pool ID of storage system (integer value)
-hitachi_thin_pool=13
+hitachi_thin_pool={{ volume.storage.thin_pool_id }}
 
 # Default copy method of storage system (string value)
 #hitachi_default_copy_method=FULL
@@ -285,9 +284,9 @@ hitachi_default_copy_method=THIN
 # Control port names for HostGroup or iSCSI Target (string
 # value)
 #hitachi_target_ports=<None>
-hitachi_target_ports=CL3-B
+hitachi_target_ports={{ volume.storage.target_ports }}
 
-hitachi_compute_target_ports=CL1-E,CL2-E,CL3-B,CL4-D
+hitachi_compute_target_ports={{ volume.storage.compute_target_ports }}
 
 # Range of group number (string value)
 #hitachi_group_range=
@@ -310,8 +309,7 @@ hitachi_horcm_user=root
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
-hitachi_horcm_password=X3tT35va
+hitachi_horcm_password={{ volume.storage.password }}
 
 # Add to HORCM configuration (boolean value)
 #hitachi_horcm_add_conf=true

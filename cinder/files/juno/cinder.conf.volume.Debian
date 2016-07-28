@@ -209,7 +209,6 @@ hitachi_horcm_user={{ volume.storage.user }}
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
 hitachi_horcm_password={{ volume.storage.password }}
 
 # Add to HORCM configuration (boolean value)
@@ -273,7 +272,6 @@ hitachi_horcm_user={{ volume.storage.user }}
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
 hitachi_horcm_password={{ volume.storage.password }}
 
 # Add to HORCM configuration (boolean value)
