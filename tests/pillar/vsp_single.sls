@@ -12,6 +12,7 @@ cinder:
     enabled: true
     version: liberty
     backend:
+      storage_id: 0000
       hus100_backend:
         type_name: HUS100
         backend: hus100_backend
