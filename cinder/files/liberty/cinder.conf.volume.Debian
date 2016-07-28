@@ -43,7 +43,7 @@ enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteri
 
 default_volume_type={% for type in volume.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
 
-enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if volume.backend.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
 
 {%- endif %}
 
@@ -161,36 +161,36 @@ connection = {{ volume.database.engine }}://{{ volume.database.user }}:{{ volume
 
 {# old way #}
 
-{%- if volume.storage.engine == "storwize" %}
+{%- if volume.backend.engine == "storwize" %}
 
 {%- for type in volume.get('types', []) %}
 
 [{{ type.backend }}]
 volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
 volume_backend_name={{ type.backend }}
-san_ip={{ volume.storage.host }}
-san_ssh_port={{ volume.storage.port }}
-san_login={{ volume.storage.user }}
-san_password={{ volume.storage.password }}
+san_ip={{ volume.backend.host }}
+san_ssh_port={{ volume.backend.port }}
+san_login={{ volume.backend.user }}
+san_password={{ volume.backend.password }}
 
 storwize_svc_volpool_name={{ type.pool }}
 #storwize_svc_connection_protocol=iSCSI
-storwize_svc_connection_protocol={{ volume.storage.connection }}
+storwize_svc_connection_protocol={{ volume.backend.connection }}
 #storwize_svc_iscsi_chap_enabled=true
-storwize_svc_multihost_enabled={{ volume.storage.multihost }}
-storwize_svc_multipath_enabled={{ volume.storage.multipath }}
+storwize_svc_multihost_enabled={{ volume.backend.multihost }}
+storwize_svc_multipath_enabled={{ volume.backend.multipath }}
 
 {%- endfor %}
 
 {%- endif %}
 
-{%- if volume.storage.engine == "hitachi_vsp" %}
+{%- if volume.backend.engine == "hitachi_vsp" %}
 
 {%- for type in volume.get('types', []) %}
 
 [{{ type.backend }}]
 
-{%- if volume.storage.version == "1.0" %}
+{%- if volume.backend.version == "1.0" %}
 
 volume_driver = cinder.volume.drivers.hitachi.hbsd_fc.HBSDFCDriver
 volume_backend_name={{ type.backend }}
@@ -246,8 +246,7 @@ hitachi_horcm_user=root
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
-hitachi_horcm_password=X3tT35va
+hitachi_horcm_password={{ volume.backend.password }}
 
 # Add to HORCM configuration (boolean value)
 #hitachi_horcm_add_conf=true
@@ -258,7 +257,7 @@ use_multipath_for_image_xfer=false
 
 {%- endif %}
 
-{%- if volume.storage.version == "1.3" %}
+{%- if volume.backend.version == "1.3" %}
 
 volume_driver = cinder.volume.drivers.hitachi.hbsd.hbsd_fc.HBSDFCDriver
 volume_backend_name=hitachi_vsp
@@ -310,8 +309,7 @@ hitachi_horcm_user=root
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
-hitachi_horcm_password=X3tT35va
+hitachi_horcm_password={{ volume.backend.password }}
 
 # Add to HORCM configuration (boolean value)
 #hitachi_horcm_add_conf=true
@@ -329,7 +327,7 @@ hitachi_storage_cli=HORCM
 
 {%- endif %}
 
-{%- if volume.storage.engine == "ceph" %}
+{%- if volume.backend.engine == "ceph" %}
 
 {%- for type in volume.get('types', []) %}
 
@@ -346,7 +344,7 @@ rbd_pool={{ type.pool }}
 # The RADOS client name for accessing rbd volumes - only set
 # when using cephx authentication (string value)
 #rbd_user=cinder
-rbd_user={{ volume.storage.user }}
+rbd_user={{ volume.backend.user }}
 
 # Path to the ceph configuration file (string value)
 #rbd_ceph_conf=
@@ -359,7 +357,7 @@ rbd_ceph_conf=/etc/ceph/ceph.conf
 # The libvirt uuid of the secret for the rbd_user volumes
 # (string value)
 #rbd_secret_uuid=da74ccb7-aa59-1721-a172-0006b1aa4e3e
-rbd_secret_uuid={{ volume.storage.secret_uuid }}
+rbd_secret_uuid={{ volume.backend.secret_uuid }}
 
 # Directory where temporary image files are stored when the
 # volume driver does not write them directly to the volume.
@@ -385,31 +383,31 @@ rbd_secret_uuid={{ volume.storage.secret_uuid }}
 {%- endif %}
 
 
-{%- if volume.storage.engine == "hp3par" %}
+{%- if volume.backend.engine == "hp3par" %}
 
 {%- for type in volume.get('types', []) %}
 
 [{{ type.backend }}]
 
-hp3par_api_url={{ volume.storage.url }}
+hp3par_api_url={{ volume.backend.url }}
 
 # 3PAR Super user username
-hp3par_username={{ volume.storage.user }}
+hp3par_username={{ volume.backend.user }}
 
 # 3PAR Super user password
-hp3par_password={{ volume.storage.password }}
+hp3par_password={{ volume.backend.password }}
 
 # 3PAR CPG to use for volume creation
-hp3par_cpg={{ volume.storage.cpg }}
+hp3par_cpg={{ volume.backend.cpg }}
 
 # IP address of SAN volume for SSH access to the array
-san_ip={{ volume.storage.host }}
+san_ip={{ volume.backend.host }}
 
 # Username for SAN volume for SSH access to the array
-san_login={{ volume.storage.login }}
+san_login={{ volume.backend.login }}
 
 # Password for SAN volume for SSH access to the array
-san_password={{ volume.storage.password }}
+san_password={{ volume.backend.password }}
 
 # FIBRE CHANNEL(uncomment the next line to enable the FC driver)
 volume_driver=cinder.volume.drivers.san.hp.hp_3par_fc.HP3PARFCDriver
@@ -428,13 +426,13 @@ volume_driver=cinder.volume.drivers.san.hp.hp_3par_fc.HP3PARFCDriver
 ## OPTIONAL SETTINGS
 # Enable HTTP debugging to 3PAR
 # hp3par_debug=True
-hp3par_debug={{ volume.storage.debug }}
+hp3par_debug={{ volume.backend.debug }}
 
 # Enable CHAP authentication for iSCSI connections.
 hp3par_iscsi_chap_enabled=false
 
 # The CPG to use for Snapshots for volumes. If empty hp3par_cpg will be used.
-hp3par_snap_cpg={{ volume.storage.snapcpg }}
+hp3par_snap_cpg={{ volume.backend.snapcpg }}
 
 # Time in hours to retain a snapshot. You can't delete it before this expires.
 hp3par_snapshot_retention=2
@@ -446,7 +444,7 @@ hp3par_snapshot_expiration=4
 
 {%- endif %}
 
-{%- if volume.storage.engine == "openvstorage" %}
+{%- if volume.backend.engine == "openvstorage" %}
 
 {%- for vpool in pillar.openvstorage.server.get('vpools', []) %}
 
@@ -459,7 +457,7 @@ vpool_name={{ vpool }}
 
 {%- endif %}
 
-{%- if volume.storage.engine == "fujitsu" %}
+{%- if volume.backend.engine == "fujitsu" %}
 
 {%- for type in volume.get('types', []) %}
 
@@ -472,7 +470,7 @@ cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.backend
 
 {%- endif %}
 
-{%- if volume.storage.engine == "gpfs" %}
+{%- if volume.backend.engine == "gpfs" %}
 
 {%- for type in volume.get('types', []) %}
 
