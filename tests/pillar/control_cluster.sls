@@ -2,6 +2,7 @@ cinder:
   controller:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     osapi:
       host: 127.0.0.1
     database:

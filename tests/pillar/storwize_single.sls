@@ -2,6 +2,7 @@ cinder:
   volume:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       7k2_SAS:
         engine: storwize
@@ -39,6 +40,7 @@ cinder:
   controller:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       7k2_SAS:
         engine: storwize

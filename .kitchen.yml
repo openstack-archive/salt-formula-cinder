@@ -1,0 +1,203 @@
+---
+driver:
+  name: vagrant
+  vm_hostname: cinder.ci.local
+  use_sudo: false
+  customize:
+    memory: 512
+
+
+provisioner:
+  name: salt_solo
+  salt_install: bootstrap
+  salt_bootstrap_url: https://bootstrap.saltstack.com
+  salt_version: latest
+  formula: cinder
+  log_level: info
+  state_top:
+    base:
+      "*":
+        - cinder
+  pillars:
+    top.sls:
+      base:
+        "*":
+          - cinder
+  grains:
+    noservices: False
+
+
+verifier:
+  name: inspec
+  sudo: true
+
+
+platforms:
+    # FIXME to mitaka
+  - name: ubuntu-14.04
+  - name: ubuntu-16.04
+  #- name: ubuntu-14.04-liberty
+    #provisioner:
+      #pillars:
+        #cinder:
+          #volume:
+            #version: liberty
+          #controller:
+            #version: liberty
+            #default_volume_type: lvmdriver-1
+  #- name: ubuntu-16.04-liberty
+    #provisioner:
+      #pillars:
+        #cinder:
+          #volume:
+            #version: liberty
+          #controller:
+            #version: liberty
+            #default_volume_type: lvmdriver-1
+  #- name: centos-7.1
+
+
+suites:
+
+
+  #- name: control_cluster
+    #provisioner:
+      #pillars-from-files:
+        #cinder.sls: tests/pillar/control_cluster.sls
+
+  #- name: control_single
+    #provisioner:
+      #pillars-from-files:
+        #cinder.sls: tests/pillar/control_cluster.sls
+
+  - name: ceph_cluster
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_cluster.sls
+        cinder.sls:   tests/pillar/ceph_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+  - name: ceph_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls:   tests/pillar/ceph_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+  # FIXME, formula is missing dependency packages, converge fails
+  #- name: eternus_single
+  #  provisioner:
+  #    pillars-from-files:
+  #      control.sls: tests/pillar/control_single.sls
+  #      cinder.sls: tests/pillar/eternus_single.sls
+  #    pillars:
+  #      top.sls:
+  #        base:
+  #          "*":
+  #            - control
+  #            - cinder
+  #            #- defaults
+
+  - name: gpfs_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/gpfs_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+              #- defaults
+
+
+  - name: hp3par_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/hp3par_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+  - name: lefthand_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/lefthand_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+  - name: solidfire_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/solidfire_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+  - name: storwize_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/storwize_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+  - name: volume_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/volume_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+  - name: vsp_single
+    provisioner:
+      pillars-from-files:
+        control.sls: tests/pillar/control_single.sls
+        cinder.sls: tests/pillar/vsp_single.sls
+      pillars:
+        top.sls:
+          base:
+            "*":
+              - control
+              - cinder
+
+
+## vim: ft=yaml sw=2 ts=2 sts=2 tw=125
