@@ -253,8 +253,7 @@ hitachi_horcm_user=root
 
 # Password of storage system for HORCM (string value)
 #hitachi_horcm_password=<None>
-#hitachi_horcm_password=avg2014
-hitachi_horcm_password=X3tT35va
+hitachi_horcm_password={{ controller.storage.password }}
 
 # Add to HORCM configuration (boolean value)
 #hitachi_horcm_add_conf=true

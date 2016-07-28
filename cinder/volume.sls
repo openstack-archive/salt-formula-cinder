@@ -36,18 +36,17 @@ cinder_volume_packages:
 
 {%- endif %}
 
+{%- if not grains.get('noservices', False) %}
+
 cinder_volume_services:
   service.running:
   - names: {{ volume.services }}
-  {%- if not grains.get('noservices', False) %}
-  - enable: True
-  {%- else %}
-  - enable: False
-  {%- endif %}
+  - enable: true
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
+{%- endif %}
 
 {# new way #}
 
