@@ -2,6 +2,7 @@ cinder:
   volume:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       HP-LeftHand:
         type_name: normal-storage
@@ -14,6 +15,7 @@ cinder:
   controller:
     enabled: true
     version: liberty
+    default_volume_type: lvmdriver-1
     backend:
       HP-LeftHand:
         type_name: normal-storage
