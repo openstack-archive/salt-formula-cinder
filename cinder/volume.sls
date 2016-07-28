@@ -15,8 +15,10 @@ cinder_volume_packages:
   - group: cinder
   - require:
     - pkg: cinder_volume_packages
+{%- if not grains.get('noservices', False) %}
   - require_in:
     - service: cinder_volume_services
+{%- endif %}
 
 {%- if pillar.cinder.controller is not defined or not pillar.cinder.controller.enabled %}
 
@@ -37,16 +39,15 @@ cinder_volume_packages:
 {%- endif %}
 
 {%- if not grains.get('noservices', False) %}
-
 cinder_volume_services:
   service.running:
   - names: {{ volume.services }}
-  - enable: true
+  - enable: True
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
-
 {%- endif %}
+
 
 {# new way #}
 

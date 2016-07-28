@@ -392,3 +392,80 @@ repository at:
 Developers should also join the discussion on the IRC list, at:
 
     https://wiki.openstack.org/wiki/Meetings/openstack-salt
+
+Development and testing
+=======================
+
+Development and test workflow with `Test Kitchen <http://kitchen.ci>`_ and
+`kitchen-salt <https://github.com/simonmcc/kitchen-salt>`_ provisioner plugin.
+
+Test Kitchen is a test harness tool to execute your configured code on one or more platforms in isolation.
+There is a ``.kitchen.yml`` in main directory that defines *platforms* to be tested and *suites* to execute on them.
+
+Kitchen CI can spin instances locally or remote, based on used *driver*.
+For local development ``.kitchen.yml`` defines a `vagrant <https://github.com/test-kitchen/kitchen-vagrant>`_ or
+`docker  <https://github.com/test-kitchen/kitchen-docker>`_ driver.
+
+To use backend drivers or implement your CI follow the section `INTEGRATION.rst#Continuous Integration`__.
+
+A listing of scenarios to be executed:
+
+.. code-block:: shell
+
+  $ kitchen list
+
+  Instance                    Driver   Provisioner  Verifier  Transport  Last Action
+
+  ceph-single-ubuntu-1404       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  ceph-single-ubuntu-1604       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  ceph-single-centos-71         Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-cluster-ubuntu-1404   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-cluster-ubuntu-1604   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-cluster-centos-71     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-single-ubuntu-1404    Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-single-ubuntu-1604    Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  control-single-centos-71      Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  eternus-single-ubuntu-1404    Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  eternus-single-ubuntu-1604    Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  eternus-single-centos-71      Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  gpfs-single-ubuntu-1404       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  gpfs-single-ubuntu-1604       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  gpfs-single-centos-71         Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  hp3par-single-ubuntu-1404     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  hp3par-single-ubuntu-1604     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  hp3par-single-centos-71       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  lefthand-single-ubuntu-1404   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  lefthand-single-ubuntu-1604   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  lefthand-single-centos-71     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  solidfire-single-ubuntu-1404  Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  solidfire-single-ubuntu-1604  Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  solidfire-single-centos-71    Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  storwize-single-ubuntu-1404   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  storwize-single-ubuntu-1604   Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  storwize-single-centos-71     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  volume-single-ubuntu-1404     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  volume-single-ubuntu-1604     Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  volume-single-centos-71       Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  vsp-single-ubuntu-1404        Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  vsp-single-ubuntu-1604        Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+  vsp-single-centos-71          Vagrant  SaltSolo     Inspec    Ssh        <Not Created>
+
+The `Busser <https://github.com/test-kitchen/busser>`_ *Verifier* is used to setup and run tests
+implementated in `<repo>/test/integration`. It installs the particular driver to tested instance
+(`Serverspec <https://github.com/neillturner/kitchen-verifier-serverspec>`_,
+`InSpec <https://github.com/chef/kitchen-inspec>`_, Shell, Bats, ...) prior the verification is executed.
+
+
+Usage:
+
+.. code-block:: shell
+
+ # list instances and status
+ kitchen list
+
+ # manually execute integration tests
+ kitchen [test || [create|converge|verify|exec|login|destroy|...]] [instance] -t tests/integration
+
+ # use with provided Makefile (ie: within CI pipeline)
+ make kitchen
+
