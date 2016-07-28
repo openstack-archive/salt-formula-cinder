@@ -43,11 +43,13 @@ cinder_controller_services:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
+{%- if not grains.get('noservices', False) %}
 cinder_syncdb:
   cmd.run:
   - name: cinder-manage db sync
   - require:
     - service: cinder_controller_services
+{%- endif %}
 
 {# new way #}
 
