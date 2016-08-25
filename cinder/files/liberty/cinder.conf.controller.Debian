@@ -10,6 +10,8 @@ volume_name_template = volume-%s
 
 verbose = True
 
+osapi_volume_workers = {{ controller.get('volume_workers', '4') }}
+
 auth_strategy = keystone
 
 state_path = /var/lib/cinder
