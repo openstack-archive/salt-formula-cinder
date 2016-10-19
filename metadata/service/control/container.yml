@@ -1,0 +1,41 @@
+parameters:
+  kubernetes:
+    control:
+      configmap:
+        cinder-control:
+          grains:
+            os_family: Debian
+          pillar:
+            cinder:
+              controller:
+                enabled: true
+                version: ${_param:cinder_version}
+                default_volume_type: ""
+                backend: {}
+                osapi:
+                  host: 0.0.0.0
+                database:
+                  engine: mysql
+                  host: ${_param:mysql_service_host}
+                  port: 3306
+                  name: cinder
+                  user: cinder
+                  password: ${_param:mysql_cinder_password}
+                identity:
+                  engine: keystone
+                  region: RegionOne
+                  host: ${_param:keystone_service_host}
+                  port: 35357
+                  tenant: service
+                  user: cinder
+                  password: ${_param:keystone_cinder_password}
+                glance:
+                  host: ${_param:glance_service_host}
+                  port: 9292
+                message_queue:
+                  engine: rabbitmq
+                  user: openstack
+                  password: ${_param:rabbitmq_openstack_password}
+                  virtual_host: '/openstack'
+                cache:
+                  engine: memcached

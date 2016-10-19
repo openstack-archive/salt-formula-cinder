@@ -12,7 +12,7 @@
         'wipe_method': 'none',
         'notification': False,
     },
-}, merge=salt['pillar.get']('cinder:controller')) %}
+}, merge=pillar.cinder.get('controller', {})) %}
 
 {% set volume = salt['grains.filter_by']({
     'Debian': {
@@ -27,4 +27,4 @@
         'wipe_method': 'none',
         'notification': False,
     },
-}, merge=salt['pillar.get']('cinder:volume')) %}
+}, merge=pillar.cinder.get('volume', {})) %}

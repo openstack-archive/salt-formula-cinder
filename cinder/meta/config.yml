@@ -1,0 +1,10 @@
+config:
+  {%- if pillar.cinder.controller is defined %}
+  {%- from "cinder/map.jinja" import controller with context %}
+  cinder.conf:
+    source: "salt://cinder/files/{{ controller.version }}/cinder.conf.controller.{{ grains.os_family|default('Debian') }}"
+    template: jinja
+  api-paste.ini:
+    source: "salt://cinder/files/{{ controller.version }}/api-paste.ini.controller.{{ grains.os_family|default('Debian') }}"
+    template: jinja
+  {%- endif %}
