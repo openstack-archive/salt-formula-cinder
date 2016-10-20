@@ -46,7 +46,7 @@ enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteri
 rpc_response_timeout=3600
 
 #Rabbit
-rpc_backend=cinder.openstack.common.rpc.impl_kombu
+rpc_backend=rabbit
 control_exchange=cinder
 
 
