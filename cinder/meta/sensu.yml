@@ -20,7 +20,7 @@ check:
     subscribers:
     - local-cinder-volume
   remote_openstack_cinder_api:
-    command: "PATH=$PATH:/usr/local/bin oschecks-check_cinder_api --os_auth_url='http://:::openstack.host:::::::openstack.port:::/v2.0' --os_username=:::openstack.user::: --os_password=':::openstack.password:::' --os_tenant_name=:::openstack.tenant:::"
+    command: "PATH=$PATH:/etc/sensu/plugins check_cinder_api.sh -u :::openstack.user::: -p :::openstack.password::: -t :::openstack.tenant::: -h 'http://:::openstack.host:::' -w 10"
     interval: 60
     occurrences: 1
     subscribers:
