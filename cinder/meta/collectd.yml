@@ -1,0 +1,12 @@
+{%- if pillar.cinder.controller is defined %}
+{%- from "cinder/map.jinja" import controller with context %}
+
+remote_plugin:
+  openstack_cinder:
+    plugin: python
+    template: cinder/files/collectd_openstack_cinder.conf
+    url: "http://{{ controller.identity.host }}:{{ controller.identity.port }}/v{% if controller.identity.get('api_version', 2)|int == 2 %}2.0{% else %}3{% endif %}"
+    username: {{ controller.identity.user }}
+    password: {{ controller.identity.password }}
+    tenant: {{ controller.identity.tenant }}
+{%- endif %}
