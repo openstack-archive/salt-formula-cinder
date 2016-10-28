@@ -1,0 +1,8 @@
+Code-Review+2: Ales Komarek <ales.komarek@tcpcloud.eu>
+Workflow+1: Ales Komarek <ales.komarek@tcpcloud.eu>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 28 Oct 2016 08:56:40 +0000
+Reviewed-on: https://review.openstack.org/391105
+Project: openstack/salt-formula-cinder
+Branch: refs/heads/stacklight
