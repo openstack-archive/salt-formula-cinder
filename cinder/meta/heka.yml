@@ -11,8 +11,8 @@ log_collector:
   input:
     cinder_log:
       engine: logstreamer
-      log_directory: "/var/log/cinder"
-      file_match: '(?P<Service>.+)\.log\.?(?P<Seq>\d*)$'
+      log_directory: "/var/log"
+      file_match: 'cinder/(?P<Service>.+)\.log\.?(?P<Seq>\d*)$'
       differentiator: ['cinder', '_', 'Service']
       priority: ["^Seq"]
       decoder: "cinder_decoder"
