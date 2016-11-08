@@ -1,5 +1,6 @@
 {%- if pillar.cinder.controller is defined %}
 {%- from "cinder/map.jinja" import controller with context %}
+{%- if pillar.cinder.controller.get('enabled', False) %}
 local_plugin:
   collectd_check_local_endpoint:
     endpoint:
@@ -14,4 +15,5 @@ remote_plugin:
     username: {{ controller.identity.user }}
     password: {{ controller.identity.password }}
     tenant: {{ controller.identity.tenant }}
+{%- endif %}
 {%- endif %}
