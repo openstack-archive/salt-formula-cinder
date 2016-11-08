@@ -1,6 +1,11 @@
 {%- if pillar.cinder.controller is defined %}
 {%- from "cinder/map.jinja" import controller with context %}
-
+local_plugin:
+  collectd_check_local_endpoint:
+    endpoint:
+      cinder-api:
+        expected_code: 200
+        url: "http://{{ controller.osapi.host }}:8776/"
 remote_plugin:
   openstack_cinder:
     plugin: python
