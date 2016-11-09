@@ -18,3 +18,149 @@ log_collector:
       priority: ["^Seq"]
       decoder: "cinder_decoder"
       splitter: "cinder_splitter"
+metric_collector:
+  trigger:
+    cinder_logs_error:
+      description: 'Too many errors have been detected in Cinder logs'
+      severity: warning
+      no_data_policy: okay
+      rules:
+      - metric: log_messages
+        field:
+          service: cinder
+          level: error
+        relational_operator: '>'
+        threshold: 0.1
+        window: 70
+        periods: 0
+        function: max
+    cinder_api_local_endpoint:
+      description: 'Cinder API is locally down'
+      severity: down
+      rules:
+      - metric: openstack_check_local_api
+        field:
+          service: cinder-api
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+  alarm:
+    cinder_logs:
+      alerting: enabled
+      triggers:
+      - cinder_logs_error
+    cinder_api_endpoint:
+      alerting: enabled
+      triggers:
+      - cinder_api_local_endpoint
+remote_collector:
+  trigger:
+    cinder_api_check_failed:
+      description: 'Endpoint check for cinder-api is failed'
+      severity: down
+      rules:
+      - metric: openstack_check_api
+        field:
+          service: cinder-api
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_one_down:
+      description: 'At least one Cinder scheduler is down'
+      severity: warning
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: down
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_majority_down:
+      description: 'Majority of Cinder schedulers are down'
+      severity: critical
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: up
+        relational_operator: '<='
+        threshold: 50
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_all_down:
+      description: 'All Cinder schedulers are down'
+      severity: down
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: up
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_volume_one_down:
+      description: 'At least one Cinder volume is down'
+      severity: warning
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: down
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_volume_majority_down:
+      description: 'Majority of Cinder volumes are down'
+      severity: critical
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: volume
+          state: up
+        relational_operator: '<='
+        threshold: 50
+        window: 60
+        periods: 0
+        function: last
+    cinder_volume_all_down:
+      description: 'All Cinder volumes are down'
+      severity: down
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: volume
+          state: up
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+  alarm:
+    cinder_api_check:
+      alerting: true
+      triggers:
+      - cinder_api_check_failed
+    cinder_volume:
+      alerting: true
+      triggers:
+      - cinder_openstack_volume_all_down
+      - cinder_openstack_volume_majority_down
+      - cinder_openstack_volume_one_down
+    cinder_scheduler:
+      alerting: true
+      triggers:
+      - cinder_scheduler_all_down
+      - cinder_scheduler_majority_down
+      - cinder_scheduler_one_down
