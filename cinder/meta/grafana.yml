@@ -1,0 +1,3 @@
+dashboard:
+  cinder:
+    template: cinder/files/Cinder.json
