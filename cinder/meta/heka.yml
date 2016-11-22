@@ -103,7 +103,7 @@ remote_collector:
       description: 'Majority of Cinder schedulers are down'
       severity: critical
       rules:
-      - metric: openstack_cinder_services
+      - metric: openstack_cinder_services_percent
         field:
           service: scheduler
           state: up
@@ -144,7 +144,7 @@ remote_collector:
       description: 'Majority of Cinder volumes are down'
       severity: critical
       rules:
-      - metric: openstack_cinder_services
+      - metric: openstack_cinder_services_percent
         field:
           service: volume
           state: up
