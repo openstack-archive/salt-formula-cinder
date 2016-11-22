@@ -1202,7 +1202,7 @@
               ],
               "measurement": "haproxy_backend_servers",
               "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"haproxy_backend_servers\" WHERE \"environment_label\" =~ /^$environment$/ AND \"backend\" = 'cinder-api' AND \"state\" = 'up' AND $timeFilter GROUP BY time($interval)",
+              "query": "SELECT last(\"value\") FROM \"haproxy_backend_servers\" WHERE \"environment_label\" =~ /^$environment$/ AND \"backend\" = 'cinder_api' AND \"state\" = 'up' AND $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1228,7 +1228,7 @@
                 },
                 {
                   "key": "backend",
-                  "value": "cinder-api"
+                  "value": "cinder_api"
                 },
                 {
                   "condition": "AND",
@@ -1327,7 +1327,7 @@
               ],
               "measurement": "haproxy_backend_servers",
               "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"haproxy_backend_servers\" WHERE \"environment_label\" =~ /^$environment$/ AND \"backend\" = 'cinder-api' AND \"state\" = 'down' AND $timeFilter GROUP BY time($interval)",
+              "query": "SELECT last(\"value\") FROM \"haproxy_backend_servers\" WHERE \"environment_label\" =~ /^$environment$/ AND \"backend\" = 'cinder_api' AND \"state\" = 'down' AND $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1353,7 +1353,7 @@
                 },
                 {
                   "key": "backend",
-                  "value": "cinder-api"
+                  "value": "cinder_api"
                 },
                 {
                   "condition": "AND",
