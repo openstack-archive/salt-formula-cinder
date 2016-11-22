@@ -107,7 +107,7 @@
                 {
                   "key": "cluster_name",
                   "operator": "=",
-                  "value": "cinder-control-plane"
+                  "value": "cinder-control"
                 }
               ]
             }
@@ -228,7 +228,7 @@
                 {
                   "key": "cluster_name",
                   "operator": "=",
-                  "value": "cinder-data-plane"
+                  "value": "cinder-data"
                 }
               ]
             }

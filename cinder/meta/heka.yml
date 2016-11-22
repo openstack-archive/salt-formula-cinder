@@ -34,6 +34,7 @@ metric_collector:
         window: 70
         periods: 0
         function: max
+    {%- if pillar.cinder.controller is defined %}
     cinder_api_local_endpoint:
       description: 'Cinder API is locally down'
       severity: down
@@ -46,7 +47,9 @@ metric_collector:
         window: 60
         periods: 0
         function: last
+    {%- endif %}
   alarm:
+    {%- if pillar.cinder.controller is defined %}
     cinder_logs:
       alerting: enabled
       triggers:
@@ -59,8 +62,18 @@ metric_collector:
       - cinder_api_local_endpoint
       dimension:
         service: cinder-api-endpoint
+    {%- endif %}
+    {%- if pillar.cinder.compute is defined %}
+    cinder_logs_volume:
+      alerting: enabled
+      triggers:
+      - cinder_logs_error
+      dimension:
+        service: cinder-logs-volume
+    {%- endif %}
 remote_collector:
   trigger:
+    {%- if pillar.cinder.controller is defined %}
     cinder_api_check_failed:
       description: 'Endpoint check for cinder-api is failed'
       severity: down
@@ -112,6 +125,8 @@ remote_collector:
         window: 60
         periods: 0
         function: last
+    {%- endif %}
+    {%- if pillar.cinder.volume is defined %}
     cinder_volume_one_down:
       description: 'At least one Cinder volume is down'
       severity: warning
@@ -151,21 +166,15 @@ remote_collector:
         window: 60
         periods: 0
         function: last
+    {%- endif %}
   alarm:
+    {%- if pillar.cinder.controller is defined %}
     cinder_api_check:
       alerting: true
       triggers:
       - cinder_api_check_failed
       dimension:
         service: cinder-api-check
-    cinder_volume:
-      alerting: true
-      triggers:
-      - cinder_volume_all_down
-      - cinder_volume_majority_down
-      - cinder_volume_one_down
-      dimension:
-        service: cinder-volume
     cinder_scheduler:
       alerting: true
       triggers:
@@ -174,8 +183,28 @@ remote_collector:
       - cinder_scheduler_one_down
       dimension:
         service: cinder-scheduler
+    {%- endif %}
+    {%- if pillar.cinder.volume is defined %}
+    cinder_volume:
+      alerting: true
+      triggers:
+      - cinder_volume_all_down
+      - cinder_volume_majority_down
+      - cinder_volume_one_down
+      dimension:
+        service: cinder-volume
+    {%- endif %}
 aggregator:
   alarm_cluster:
+    cinder_logs_volume:
+      policy: highest_severity
+      group_by: hostname
+      match:
+        service: cinder-logs-volume
+      members:
+      - cinder_logs_volume
+      dimension:
+        service: cinder-data
     cinder_logs:
       policy: highest_severity
       group_by: hostname
@@ -184,7 +213,7 @@ aggregator:
       members:
       - cinder_logs
       dimension:
-        service: cinder
+        service: cinder-control
     cinder_api_endpoint:
       policy: availability_of_members
       group_by: hostname
@@ -193,7 +222,7 @@ aggregator:
       members:
       - cinder_api_endpoint
       dimension:
-        service: cinder
+        service: cinder-control
     cinder_api_check:
       policy: highest_severity
       match:
@@ -201,7 +230,7 @@ aggregator:
       members:
       - cinder_api_check
       dimension:
-        service: cinder
+        service: cinder-control
     cinder_volume:
       policy: highest_severity
       match:
@@ -209,7 +238,7 @@ aggregator:
       members:
       - cinder_volume
       dimension:
-        service: cinder
+        service: cinder-data
     cinder_scheduler:
       policy: highest_severity
       match:
@@ -217,16 +246,24 @@ aggregator:
       members:
       - cinder_scheduler
       dimension:
-        service: cinder
-    cinder:
+        service: cinder-control
+    cinder_control:
       policy: highest_severity
       match:
-        service: cinder
+        service: cinder-control
       members:
       - cinder_logs
       - cinder_api_endpoint
       - cinder_api_check
-      - cinder_volume
       - cinder_scheduler
       dimension:
-        cluster_name: cinder
+        cluster_name: cinder-control
+    cinder_data:
+      policy: highest_severity
+      match:
+        service: cinder-data
+      members:
+      - cinder_logs_volume
+      - cinder_volume
+      dimension:
+        cluster_name: cinder-data
