@@ -170,13 +170,13 @@ remote_collector:
   alarm:
     {%- if pillar.cinder.controller is defined %}
     cinder_api_check:
-      alerting: true
+      alerting: enabled
       triggers:
       - cinder_api_check_failed
       dimension:
         service: cinder-api-check
     cinder_scheduler:
-      alerting: true
+      alerting: enabled
       triggers:
       - cinder_scheduler_all_down
       - cinder_scheduler_majority_down
@@ -186,7 +186,7 @@ remote_collector:
     {%- endif %}
     {%- if pillar.cinder.volume is defined %}
     cinder_volume:
-      alerting: true
+      alerting: enabled
       triggers:
       - cinder_volume_all_down
       - cinder_volume_majority_down
@@ -198,6 +198,7 @@ aggregator:
   alarm_cluster:
     cinder_logs_volume:
       policy: highest_severity
+      alerting: enabled
       group_by: hostname
       match:
         service: cinder-logs-volume
@@ -205,8 +206,10 @@ aggregator:
       - cinder_logs_volume
       dimension:
         service: cinder-data
+        nagios_host: 01-service-clusters
     cinder_logs:
       policy: highest_severity
+      alerting: enabled
       group_by: hostname
       match:
         service: cinder-logs
@@ -214,8 +217,10 @@ aggregator:
       - cinder_logs
       dimension:
         service: cinder-control
+        nagios_host: 01-service-clusters
     cinder_api_endpoint:
       policy: availability_of_members
+      alerting: enabled
       group_by: hostname
       match:
         service: cinder-api-endpoint
@@ -223,32 +228,40 @@ aggregator:
       - cinder_api_endpoint
       dimension:
         service: cinder-control
+        nagios_host: 01-service-clusters
     cinder_api_check:
       policy: highest_severity
+      alerting: enabled
       match:
         service: cinder-api-check
       members:
       - cinder_api_check
       dimension:
         service: cinder-control
+        nagios_host: 01-service-clusters
     cinder_volume:
       policy: highest_severity
+      alerting: enabled
       match:
         service: cinder-volume
       members:
       - cinder_volume
       dimension:
         service: cinder-data
+        nagios_host: 01-service-clusters
     cinder_scheduler:
       policy: highest_severity
+      alerting: enabled
       match:
         service: cinder-scheduler
       members:
       - cinder_scheduler
       dimension:
         service: cinder-control
+        nagios_host: 01-service-clusters
     cinder_control:
       policy: highest_severity
+      alerting: enabled_with_notification
       match:
         service: cinder-control
       members:
@@ -258,8 +271,10 @@ aggregator:
       - cinder_scheduler
       dimension:
         cluster_name: cinder-control
+        nagios_host: 00-top-clusters
     cinder_data:
       policy: highest_severity
+      alerting: enabled_with_notification
       match:
         service: cinder-data
       members:
@@ -267,3 +282,4 @@ aggregator:
       - cinder_volume
       dimension:
         cluster_name: cinder-data
+        nagios_host: 00-top-clusters
