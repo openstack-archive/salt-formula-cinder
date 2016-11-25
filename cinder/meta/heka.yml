@@ -1,0 +1,285 @@
+log_collector:
+  decoder:
+    cinder:
+      engine: sandbox
+      module_file: /usr/share/lma_collector/decoders/openstack_log.lua
+      module_dir: /usr/share/lma_collector/common;/usr/share/heka/lua_modules
+      adjust_timezone: true
+  splitter:
+    cinder:
+      engine: token
+      delimiter: '\n'
+  input:
+    cinder_log:
+      engine: logstreamer
+      log_directory: "/var/log"
+      file_match: 'cinder/(?P<Service>.+)\.log\.?(?P<Seq>\d*)$'
+      differentiator: ['cinder', '_', 'Service']
+      priority: ["^Seq"]
+      decoder: "cinder_decoder"
+      splitter: "cinder_splitter"
+metric_collector:
+  trigger:
+    cinder_logs_error:
+      description: 'Too many errors have been detected in Cinder logs'
+      severity: warning
+      no_data_policy: okay
+      rules:
+      - metric: log_messages
+        field:
+          service: cinder
+          level: error
+        relational_operator: '>'
+        threshold: 0.1
+        window: 70
+        periods: 0
+        function: max
+    {%- if pillar.cinder.controller is defined %}
+    cinder_api_local_endpoint:
+      description: 'Cinder API is locally down'
+      severity: down
+      rules:
+      - metric: openstack_check_local_api
+        field:
+          service: cinder-api
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    {%- endif %}
+  alarm:
+    {%- if pillar.cinder.controller is defined %}
+    cinder_logs:
+      alerting: enabled
+      triggers:
+      - cinder_logs_error
+      dimension:
+        service: cinder-logs
+    cinder_api_endpoint:
+      alerting: enabled
+      triggers:
+      - cinder_api_local_endpoint
+      dimension:
+        service: cinder-api-endpoint
+    {%- endif %}
+    {%- if pillar.cinder.compute is defined %}
+    cinder_logs_volume:
+      alerting: enabled
+      triggers:
+      - cinder_logs_error
+      dimension:
+        service: cinder-logs-volume
+    {%- endif %}
+remote_collector:
+  trigger:
+    {%- if pillar.cinder.controller is defined %}
+    cinder_api_check_failed:
+      description: 'Endpoint check for cinder-api is failed'
+      severity: down
+      rules:
+      - metric: openstack_check_api
+        field:
+          service: cinder-api
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_one_down:
+      description: 'At least one Cinder scheduler is down'
+      severity: warning
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: down
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_majority_down:
+      description: 'Majority of Cinder schedulers are down'
+      severity: critical
+      rules:
+      - metric: openstack_cinder_services_percent
+        field:
+          service: scheduler
+          state: up
+        relational_operator: '<='
+        threshold: 50
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_all_down:
+      description: 'All Cinder schedulers are down'
+      severity: down
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: up
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    {%- endif %}
+    {%- if pillar.cinder.volume is defined %}
+    cinder_volume_one_down:
+      description: 'At least one Cinder volume is down'
+      severity: warning
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: down
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_volume_majority_down:
+      description: 'Majority of Cinder volumes are down'
+      severity: critical
+      rules:
+      - metric: openstack_cinder_services_percent
+        field:
+          service: volume
+          state: up
+        relational_operator: '<='
+        threshold: 50
+        window: 60
+        periods: 0
+        function: last
+    cinder_volume_all_down:
+      description: 'All Cinder volumes are down'
+      severity: down
+      rules:
+      - metric: openstack_cinder_services
+        field:
+          service: volume
+          state: up
+        relational_operator: '=='
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    {%- endif %}
+  alarm:
+    {%- if pillar.cinder.controller is defined %}
+    cinder_api_check:
+      alerting: enabled
+      triggers:
+      - cinder_api_check_failed
+      dimension:
+        service: cinder-api-check
+    cinder_scheduler:
+      alerting: enabled
+      triggers:
+      - cinder_scheduler_all_down
+      - cinder_scheduler_majority_down
+      - cinder_scheduler_one_down
+      dimension:
+        service: cinder-scheduler
+    {%- endif %}
+    {%- if pillar.cinder.volume is defined %}
+    cinder_volume:
+      alerting: enabled
+      triggers:
+      - cinder_volume_all_down
+      - cinder_volume_majority_down
+      - cinder_volume_one_down
+      dimension:
+        service: cinder-volume
+    {%- endif %}
+aggregator:
+  alarm_cluster:
+    cinder_logs_volume:
+      policy: highest_severity
+      alerting: enabled
+      group_by: hostname
+      match:
+        service: cinder-logs-volume
+      members:
+      - cinder_logs_volume
+      dimension:
+        service: cinder-data
+        nagios_host: 01-service-clusters
+    cinder_logs:
+      policy: highest_severity
+      alerting: enabled
+      group_by: hostname
+      match:
+        service: cinder-logs
+      members:
+      - cinder_logs
+      dimension:
+        service: cinder-control
+        nagios_host: 01-service-clusters
+    cinder_api_endpoint:
+      policy: availability_of_members
+      alerting: enabled
+      group_by: hostname
+      match:
+        service: cinder-api-endpoint
+      members:
+      - cinder_api_endpoint
+      dimension:
+        service: cinder-control
+        nagios_host: 01-service-clusters
+    cinder_api_check:
+      policy: highest_severity
+      alerting: enabled
+      match:
+        service: cinder-api-check
+      members:
+      - cinder_api_check
+      dimension:
+        service: cinder-control
+        nagios_host: 01-service-clusters
+    cinder_volume:
+      policy: highest_severity
+      alerting: enabled
+      match:
+        service: cinder-volume
+      members:
+      - cinder_volume
+      dimension:
+        service: cinder-data
+        nagios_host: 01-service-clusters
+    cinder_scheduler:
+      policy: highest_severity
+      alerting: enabled
+      match:
+        service: cinder-scheduler
+      members:
+      - cinder_scheduler
+      dimension:
+        service: cinder-control
+        nagios_host: 01-service-clusters
+    cinder_control:
+      policy: highest_severity
+      alerting: enabled_with_notification
+      match:
+        service: cinder-control
+      members:
+      - cinder_logs
+      - cinder_api_endpoint
+      - cinder_api_check
+      - cinder_scheduler
+      dimension:
+        cluster_name: cinder-control
+        nagios_host: 00-top-clusters
+    cinder_data:
+      policy: highest_severity
+      alerting: enabled_with_notification
+      match:
+        service: cinder-data
+      members:
+      - cinder_logs_volume
+      - cinder_volume
+      dimension:
+        cluster_name: cinder-data
+        nagios_host: 00-top-clusters
