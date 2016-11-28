@@ -57,6 +57,7 @@ cinder_type_create_{{ backend_name }}:
   cmd.run:
   - name: "source /root/keystonerc; cinder type-create {{ backend.type_name }}"
   - unless: "source /root/keystonerc; cinder type-list | grep {{ backend.type_name }}"
+  - shell: /bin/bash
   - require:
     - service: cinder_controller_services
 
@@ -64,6 +65,7 @@ cinder_type_update_{{ backend_name }}:
   cmd.run:
   - name: "source /root/keystonerc; cinder type-key {{ backend.type_name }} set volume_backend_name={{ backend_name }}"
   - unless: "source /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ backend_name }}'}\""
+  - shell: /bin/bash
   - require:
     - cmd: cinder_type_create_{{ backend_name }}
 
@@ -79,6 +81,7 @@ cinder_type_create_{{ type.name }}:
   cmd.run:
   - name: "source /root/keystonerc; cinder type-create {{ type.name }}"
   - unless: "source /root/keystonerc; cinder type-list | grep {{ type.name }}"
+  - shell: /bin/bash
   - require:
     - service: cinder_controller_services
 
@@ -86,6 +89,7 @@ cinder_type_update_{{ type.name }}:
   cmd.run:
   - name: "source /root/keystonerc; cinder type-key {{ type.name }} set volume_backend_name={{ type.get('backend', type.name) }}"
   - unless: "source /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ type.get('backend', type.name) }}'}\""
+  - shell: /bin/bash
   - require:
     - cmd: cinder_type_create_{{ type.name }}
 
