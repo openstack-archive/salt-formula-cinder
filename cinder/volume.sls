@@ -18,7 +18,7 @@ cinder_volume_packages:
   - require_in:
     - service: cinder_volume_services
 
-{%- if pillar.cinder.controller is not defined or not pillar.cinder.controller.enabled %}
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
 /etc/cinder/cinder.conf:
   file.managed:

@@ -8,10 +8,10 @@ cinder_user:
     - shell: /bin/false
     - system: True
     - require_in:
-      {%- if pillar.cinder.controller is defined and pillar.cinder.controller.enabled %}
+      {%- if pillar.cinder.get('controller', {}).get('enabled', False) %}
       - pkg: cinder_controller_packages
       {%- endif %}
-      {%- if pillar.cinder.volume is defined and pillar.cinder.volume.enabled %}
+      {%- if pillar.cinder.get('volume', {}).get('enabled', False) %}
       - pkg: cinder_volume_packages
       {%- endif %}
 
