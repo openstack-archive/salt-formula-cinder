@@ -40,3 +40,7 @@ cinder:
         port: 11211
       - host: 127.0.0.1
         port: 11211
+
+    audit:
+      filter_factory: 'keystonemiddleware.audit:filter_factory'
+      map_file: '/etc/pycadf/cinder_api_audit_map.conf'

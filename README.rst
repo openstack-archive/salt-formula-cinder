@@ -52,6 +52,8 @@ cinder-volume to role volume.
             multihost: true
             multipath: true
             pool: SAS7K2
+        audit: 
+          enabled: false
 
     cinder:
       volume:
@@ -91,7 +93,8 @@ cinder-volume to role volume.
             multihost: true
             multipath: true
             pool: SAS7K2
-            w
+        audit:
+          enabled: false
 
 Client-side RabbitMQ HA setup for controller
 
@@ -367,13 +370,34 @@ Cinder setup with Solidfire
             clustername: cluster1
             sf_emulate_512: false
 
+
+
+Enable auditing filter, ie: CADF
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        audit:
+          enabled: true
+      ....
+          filter_factory: 'keystonemiddleware.audit:filter_factory'
+          map_file: '/etc/pycadf/cinder_api_audit_map.conf'
+      ....
+      volume:
+        audit:
+          enabled: true
+      ....
+          filter_factory: 'keystonemiddleware.audit:filter_factory'
+          map_file: '/etc/pycadf/cinder_api_audit_map.conf'
+
 Documentation and Bugs
 ============================
 
 To learn how to deploy OpenStack Salt, consult the documentation available
 online at:
 
-    https://wiki.openstack.org/wiki/OpenStackSalt
+https://wiki.openstack.org/wiki/OpenStackSalt
 
 In the unfortunate event that bugs are discovered, they should be reported to
 the appropriate bug tracker. If you obtained the software from a 3rd party

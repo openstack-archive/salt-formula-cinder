@@ -2,6 +2,7 @@
 # OpenStack #
 #############
 {%- from "cinder/map.jinja" import volume with context %}
+
 [composite:osapi_volume]
 use = call:cinder.api:root_app_factory
 /: apiversions
@@ -11,14 +12,14 @@ use = call:cinder.api:root_app_factory
 [composite:openstack_volume_api_v1]
 use = call:cinder.api.middleware.auth:pipeline_factory
 noauth = request_id faultwrap sizelimit osprofiler noauth apiv1
-keystone = request_id faultwrap sizelimit osprofiler authtoken keystonecontext apiv1
-keystone_nolimit = request_id faultwrap sizelimit osprofiler authtoken keystonecontext apiv1
+keystone = request_id faultwrap sizelimit osprofiler authtoken keystonecontext {% if volume.audit.enabled %}audit {% endif %}apiv1
+keystone_nolimit = request_id faultwrap sizelimit osprofiler authtoken keystonecontext {% if volume.audit.enabled %}audit {% endif %}apiv1
 
 [composite:openstack_volume_api_v2]
 use = call:cinder.api.middleware.auth:pipeline_factory
 noauth = request_id faultwrap sizelimit osprofiler noauth apiv2
-keystone = request_id faultwrap sizelimit osprofiler authtoken keystonecontext apiv2
-keystone_nolimit = request_id faultwrap sizelimit osprofiler authtoken keystonecontext apiv2
+keystone = request_id faultwrap sizelimit osprofiler authtoken keystonecontext {% if volume.audit.enabled %}audit {% endif %}apiv2
+keystone_nolimit = request_id faultwrap sizelimit osprofiler authtoken keystonecontext {% if volume.audit.enabled %}audit {% endif %}apiv2
 
 [filter:request_id]
 paste.filter_factory = oslo_middleware.request_id:RequestId.factory
@@ -68,3 +69,9 @@ admin_tenant_name = {{ volume.identity.tenant }}
 admin_user = {{ volume.identity.user }}
 admin_password = {{ volume.identity.password }}
 auth_uri=http://{{ volume.identity.host }}:5000/{% if volume.identity.get('version', 2) == 3 %}v3{% endif %}
+
+{%- if volume.audit.enabled %}
+[filter:audit]
+paste.filter_factory = {{ volume.get("audit", {}).get("filter_factory", "keystonemiddleware.audit:filter_factory")   }}
+audit_map_file = {{ volume.get("audit", {}).get("map_file", "/etc/pycadf/cinder_api_audit_map.conf")  }}
+{%- endif %}
