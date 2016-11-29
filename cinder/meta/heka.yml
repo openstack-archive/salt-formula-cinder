@@ -1,3 +1,7 @@
+{%- from "cinder/map.jinja" import controller as _controller with context %}
+{%- from "cinder/map.jinja" import volume as _volume with context %}
+{%- set controller = _controller.get('enabled', False) %}
+{%- set volume = _volume.get('enabled', False) %}
 log_collector:
   decoder:
     cinder:
@@ -34,7 +38,7 @@ metric_collector:
         window: 70
         periods: 0
         function: max
-    {%- if pillar.cinder.controller is defined %}
+    {%- if controller %}
     cinder_api_local_endpoint:
       description: 'Cinder API is locally down'
       severity: down
@@ -49,7 +53,7 @@ metric_collector:
         function: last
     {%- endif %}
   alarm:
-    {%- if pillar.cinder.controller is defined %}
+    {%- if controller %}
     cinder_logs:
       alerting: enabled
       triggers:
@@ -63,7 +67,7 @@ metric_collector:
       dimension:
         service: cinder-api-endpoint
     {%- endif %}
-    {%- if pillar.cinder.compute is defined %}
+    {%- if volume %}
     cinder_logs_volume:
       alerting: enabled
       triggers:
@@ -73,7 +77,7 @@ metric_collector:
     {%- endif %}
 remote_collector:
   trigger:
-    {%- if pillar.cinder.controller is defined %}
+    {%- if controller %}
     cinder_api_check_failed:
       description: 'Endpoint check for cinder-api is failed'
       severity: down
@@ -126,7 +130,7 @@ remote_collector:
         periods: 0
         function: last
     {%- endif %}
-    {%- if pillar.cinder.volume is defined %}
+    {%- if volume %}
     cinder_volume_one_down:
       description: 'At least one Cinder volume is down'
       severity: warning
@@ -168,7 +172,7 @@ remote_collector:
         function: last
     {%- endif %}
   alarm:
-    {%- if pillar.cinder.controller is defined %}
+    {%- if controller %}
     cinder_api_check:
       alerting: enabled
       triggers:
@@ -184,7 +188,7 @@ remote_collector:
       dimension:
         service: cinder-scheduler
     {%- endif %}
-    {%- if pillar.cinder.volume is defined %}
+    {%- if volume %}
     cinder_volume:
       alerting: enabled
       triggers:
