@@ -1,5 +1,5 @@
 {%- from "cinder/map.jinja" import controller with context %}
-{%- if controller.enabled %}
+{%- if controller.get('enabled', False) %}
 
 include:
 - cinder.user
