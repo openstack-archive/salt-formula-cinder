@@ -74,7 +74,12 @@ nova_catalog_info = compute:nova:publicURL
 osapi_volume_extension = cinder.api.contrib.standard_extensions
 
 [oslo_messaging_notifications]
-{%- if controller.notification %}
+{%- if controller.notification is mapping %}
+driver = {{ controller.notification.get('driver', 'messagingv2') }}
+{%- if controller.notification.topics is defined %}
+topics = {{ controller.notification.topics }}
+{%- endif %}
+{%- elif controller.notification %}
 driver = messagingv2
 {%- endif %}
 
