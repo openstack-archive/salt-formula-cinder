@@ -75,7 +75,11 @@ osapi_volume_extension = cinder.api.contrib.standard_extensions
 
 [oslo_messaging_notifications]
 {%- if controller.notification %}
-driver = messagingv2
+control_exchange = cinder
+notification_driver = {{ controller.notification.get('driver', 'messagingv2') }}
+{%- if controller.notification.topics is defined %}
+notification_topics = {{ controller.notification.topics }}
+{%- endif %}
 {%- endif %}
 
 [oslo_concurrency]

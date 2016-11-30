@@ -68,7 +68,11 @@ verbose=True
 
 [oslo_messaging_notifications]
 {%- if volume.notification %}
-driver = messagingv2
+control_exchange = cinder
+notification_driver = {{ volume.notification.get('driver', 'messagingv2') }}
+{%- if volume.notification.topics is defined %}
+notification_topics = {{ volume.notification.topics }}
+{%- endif %}
 {%- endif %}
 
 [oslo_concurrency]
