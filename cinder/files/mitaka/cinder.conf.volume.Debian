@@ -67,7 +67,12 @@ use_syslog=false
 verbose=True
 
 [oslo_messaging_notifications]
-{%- if volume.notification %}
+{%- if volume.notification is mapping %}
+notification_driver = {{ volume.notification.get('driver', 'messagingv2') }}
+{%- if volume.notification.topics is defined %}
+notification_topics = {{ volume.notification.topics }}
+{%- endif %}
+{%- elif volume.notification %}
 driver = messagingv2
 {%- endif %}
 

@@ -69,7 +69,12 @@ verbose=True
 lock_path=/var/lock/cinder
 
 [oslo_messaging_notifications]
-{%- if controller.notification %}
+{%- if controller.notification is mapping %}
+notification_driver = {{ controller.notification.get('driver', 'messagingv2') }}
+{%- if controller.notification.topics is defined %}
+notification_topics = {{ controller.notification.topics }}
+{%- endif %}
+{%- elif controller.notification %}
 driver = messagingv2
 {%- endif %}
 

@@ -60,18 +60,13 @@ control_exchange=cinder
 volume_clear={{ volume.wipe_method }}
 
 {%- if volume.notification %}
-control_exchange = cinder
-
-{%- if volume.notification.driver is defined %}
-notification_driver = {{ volume.notification.driver }}
-{%- else %}
-notification_driver = messagingv2
-{%- endif %}
-
+{%- if volume.notification is mapping %}
+notification_driver = {{ volume.notification.get('driver', 'messagingv2') }}
 {%- if volume.notification.topics is defined %}
 notification_topics = {{ volume.notification.topics }}
 {%- endif %}
-
+{%- elif volume.notification %}
+driver = messagingv2
 {%- endif %}
 
 volume_name_template = volume-%s
