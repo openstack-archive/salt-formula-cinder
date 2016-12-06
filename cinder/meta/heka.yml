@@ -92,10 +92,20 @@ remote_collector:
         window: 60
         periods: 0
         function: last
-    cinder_scheduler_one_down:
-      description: 'At least one Cinder scheduler is down'
+    cinder_scheduler_two_up:
+      description: 'There is one or more Cinder scheduler down'
       severity: warning
+      logical_operator: and
       rules:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: up
+        relational_operator: '>='
+        threshold: 2
+        window: 60
+        periods: 0
+        function: last
       - metric: openstack_cinder_services
         field:
           service: scheduler
@@ -105,20 +115,30 @@ remote_collector:
         window: 60
         periods: 0
         function: last
-    cinder_scheduler_majority_down:
-      description: 'Majority of Cinder schedulers are down'
+    cinder_scheduler_one_up:
+      description: 'There is only one Cinder scheduler up left'
       severity: critical
+      logical_operator: and
       rules:
-      - metric: openstack_cinder_services_percent
+      - metric: openstack_cinder_services
         field:
           service: scheduler
           state: up
-        relational_operator: '<='
-        threshold: 50
+        relational_operator: '=='
+        threshold: 1
         window: 60
         periods: 0
         function: last
-    cinder_scheduler_all_down:
+      - metric: openstack_cinder_services
+        field:
+          service: scheduler
+          state: '== down || == disabled'
+        relational_operator: '>'
+        threshold: 0
+        window: 60
+        periods: 0
+        function: last
+    cinder_scheduler_zero_up:
       description: 'All Cinder schedulers are down'
       severity: down
       rules:
@@ -133,16 +153,26 @@ remote_collector:
         function: last
     {%- endif %}
     {%- if volume %}
-    cinder_volume_one_down:
-      description: 'At least one Cinder volume is down'
+    cinder_volume_some_down:
+      description: 'Some Cinder volumes are down'
       severity: warning
+      logical_operator: and
       rules:
-      - metric: openstack_cinder_services
+      - metric: openstack_cinder_services_percent
         field:
           service: volume
           state: down
         relational_operator: '>'
         threshold: 0
+        window: 60
+        periods: 0
+        function: last
+      - metric: openstack_cinder_services_percent
+        field:
+          service: volume
+          state: up
+        relational_operator: '>='
+        threshold: 50
         window: 60
         periods: 0
         function: last
@@ -154,7 +184,7 @@ remote_collector:
         field:
           service: volume
           state: up
-        relational_operator: '<='
+        relational_operator: '<'
         threshold: 50
         window: 60
         periods: 0
@@ -163,12 +193,12 @@ remote_collector:
       description: 'All Cinder volumes are down'
       severity: down
       rules:
-      - metric: openstack_cinder_services
+      - metric: openstack_cinder_services_percent
         field:
           service: volume
-          state: up
+          state: down
         relational_operator: '=='
-        threshold: 0
+        threshold: 100
         window: 60
         periods: 0
         function: last
@@ -184,9 +214,9 @@ remote_collector:
     cinder_scheduler:
       alerting: enabled
       triggers:
-      - cinder_scheduler_all_down
-      - cinder_scheduler_majority_down
-      - cinder_scheduler_one_down
+      - cinder_scheduler_zero_up
+      - cinder_scheduler_one_up
+      - cinder_scheduler_two_up
       dimension:
         service: cinder-scheduler
     {%- endif %}
@@ -196,7 +226,7 @@ remote_collector:
       triggers:
       - cinder_volume_all_down
       - cinder_volume_majority_down
-      - cinder_volume_one_down
+      - cinder_volume_some_down
       dimension:
         service: cinder-volume
     {%- endif %}
@@ -204,7 +234,7 @@ aggregator:
   alarm_cluster:
     {%- if volume %}
     cinder_logs_volume:
-      policy: highest_severity
+      policy: majority_of_node_members
       alerting: enabled
       group_by: hostname
       match:
@@ -215,6 +245,8 @@ aggregator:
         service: cinder-data
         nagios_host: 01-service-clusters
     cinder_volume:
+      # Note: this alarm cluster has only one member, so the type of policy
+      # used has no impact
       policy: highest_severity
       alerting: enabled
       match:
@@ -238,7 +270,7 @@ aggregator:
     {%- endif %}
     {%- if controller %}
     cinder_logs:
-      policy: highest_severity
+      policy: status_of_members
       alerting: enabled
       group_by: hostname
       match:
@@ -260,6 +292,8 @@ aggregator:
         service: cinder-control
         nagios_host: 01-service-clusters
     cinder_api_check:
+      # Note: this alarm cluster has only one member, so the type of policy
+      # used has no impact
       policy: highest_severity
       alerting: enabled
       match:
@@ -270,6 +304,8 @@ aggregator:
         service: cinder-control
         nagios_host: 01-service-clusters
     cinder_scheduler:
+      # Note: this alarm cluster has only one member, so the type of policy
+      # used has no impact
       policy: highest_severity
       alerting: enabled
       match:
