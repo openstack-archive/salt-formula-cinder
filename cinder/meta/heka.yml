@@ -93,7 +93,7 @@ remote_collector:
         periods: 0
         function: last
     cinder_scheduler_two_up:
-      description: 'There is one or more Cinder scheduler down'
+      description: 'Some Cinder schedulers are down'
       severity: warning
       logical_operator: and
       rules:
@@ -116,7 +116,7 @@ remote_collector:
         periods: 0
         function: last
     cinder_scheduler_one_up:
-      description: 'There is only one Cinder scheduler up left'
+      description: 'Only one Cinder scheduler is up'
       severity: critical
       logical_operator: and
       rules:
@@ -139,7 +139,7 @@ remote_collector:
         periods: 0
         function: last
     cinder_scheduler_zero_up:
-      description: 'All Cinder schedulers are down'
+      description: 'All Cinder schedulers are down or disabled'
       severity: down
       rules:
       - metric: openstack_cinder_services
