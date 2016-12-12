@@ -406,6 +406,16 @@ Enable auditing filter, ie: CADF
           filter_factory: 'keystonemiddleware.audit:filter_factory'
           map_file: '/etc/pycadf/cinder_api_audit_map.conf'
 
+Setup a local loopback device to emulate the LVM Cinder backend:
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        loopback_device:
+          local_file: /srv/cinder-volume
+          size: 50G
+
 Documentation and Bugs
 ============================
 
