@@ -65,6 +65,9 @@ control_exchange = cinder
 notification_driver = messagingv2
 {%- endif %}
 
+{%- if controller.notification.topics is defined %}
+notification_topics = {{ controller.notification.topics }}
+{%- endif %}
 
 volume_name_template = volume-%s
 

@@ -73,6 +73,10 @@ lock_path=/var/lock/cinder
 driver = messagingv2
 {%- endif %}
 
+{%- if controller.notification.topics is defined %}
+topics = {{ controller.notification.topics }}
+{%- endif %}
+
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
