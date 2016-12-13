@@ -78,6 +78,12 @@ osapi_volume_extension = cinder.api.contrib.standard_extensions
 driver = messagingv2
 {%- endif %}
 
+{%- if controller.notification_topics %}
+{%- for topic in controller.notification_topics %}
+topics = {{ topic }}
+{%- endfor %}
+{%- endif %}
+
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder

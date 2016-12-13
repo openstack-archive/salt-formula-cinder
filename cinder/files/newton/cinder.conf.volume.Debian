@@ -74,6 +74,12 @@ nova_catalog_info = compute:nova:publicURL
 driver = messagingv2
 {%- endif %}
 
+{%- if volume.notification_topics %}
+{%- for topic in volume.notification_topics %}
+topics = {{ topic }}
+{%- endfor %}
+{%- endif %}
+
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
