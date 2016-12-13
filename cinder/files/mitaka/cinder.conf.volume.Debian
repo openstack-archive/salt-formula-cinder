@@ -71,6 +71,10 @@ verbose=True
 driver = messagingv2
 {%- endif %}
 
+{%- if volume.notification.topics is defined %}
+notification_topics = {{ volume.notification.topics }}
+{%- endif %}
+
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
