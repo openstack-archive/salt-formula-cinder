@@ -54,7 +54,7 @@ cinder_volume_services:
 
 {%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
 
-{%- if backend.engine == 'iscsi' %}
+{%- if backend.engine in ['iscsi' , 'hp_lefthand'] %}
 
 cinder_iscsi_packages_{{ loop.index }}:
   pkg.installed:
@@ -136,7 +136,7 @@ cinder_driver_fujitsu_{{ loop.index }}:
 
 {%- if volume.storage is defined %}
 
-{%- if volume.storage.engine == 'iscsi' %}
+{%- if volume.storage.engine in ['iscsi', 'hp_lefthand'] %}
 
 cinder_iscsi_packages:
   pkg.installed:
