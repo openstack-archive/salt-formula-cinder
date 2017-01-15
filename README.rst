@@ -243,6 +243,21 @@ Cinder setup with Hitachi VPS
             engine: hitachi_vsp
             connection: FC
 
+Cinder setup with Hitachi VPS with defined ldev range
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        enabled: true
+        backend:
+          hus100_backend:
+            type_name: HUS100
+            backend: hus100_backend
+            engine: hitachi_vsp
+            connection: FC
+            ldev_range: 0-1000
+
 Cinder setup with CEPH
 
 .. code-block:: yaml
