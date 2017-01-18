@@ -2,3 +2,31 @@ dashboard:
   cinder:
     format: json
     template: cinder/files/grafana_dashboards/cinder_influxdb.json
+  Main:
+    row:
+      ost-control-plane:
+        title: OpenStack Control Plane
+        panel:
+          cinder:
+            title: Cinder
+            links:
+            - dashboard: Cinder
+              title: Cinder
+              type: dashboard
+            target:
+              cluster_status:
+                rawQuery: true
+                query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'cinder-control' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
+      ost-data-plane:
+        title: OpenStack Data Plane
+        panel:
+          cinder:
+            title: Cinder
+            links:
+            - dashboard: Cinder
+              title: Cinder
+              type: dashboard
+            target:
+              cluster_status:
+                rawQuery: true
+                query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'cinder-data' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
