@@ -1,4 +1,0 @@
-dashboard:
-  cinder:
-    format: json
-    template: cinder/files/grafana_dashboards/cinder_influxdb.json
